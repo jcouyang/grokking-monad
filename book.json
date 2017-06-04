@@ -6,5 +6,9 @@
     "image-captions": {
       "caption": "图_PAGE_LEVEL_._PAGE_IMAGE_NUMBER_： _CAPTION_"
     }
+  },
+  "styles": {
+    "website": "styles/website.css",
+    "ebook": "styles/ebook.css"
   }
 }

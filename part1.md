@@ -1,17 +1,8 @@
 
-<div class="org-center">
-FBI Warning
 
-本文所有文字与图片遵循 <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/">CC 署名-非商业性使用-禁止演绎 3.0 许可协议</a><br/><a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/3.0/88x31.png" /></a>
-</div>
-
--   **[第一部分：范畴论](./index.md)** 👈
--   [第二部分：食用猫呢](./part2.md)
--   [第三部分：搞基猫呢](./part3.md)
+<a id="org6a2891a"></a>
 
 很多人都不明白什么是Monad，并不是因为不会用，不知觉可能就在用某种 monad。 定义和使用起来其实不难，困惑的大多应该是后面的这堆理论&#x2013; 范畴论。当然，我也没学过范畴论，只是略微看得懂写Haskell罢了。
-
-我在书中[写过一章](https://book.douban.com/subject/26883736/)来解释，某人也尝试过很[写博客解释](http://www.ruanyifeng.com/blog/2017/02/fp-tutorial.html)，比如为了降低门槛用JS来，那Haskell/Scala的人出来喷你们前端这些不懂函数式的渣渣乱搞出来的东西根本就不是 monad。
 
 我也画过一些图来解释，又会被嫌弃画风不好。但是，作为灵魂画师，我只 ~~是觉得自己萌萌的啊~~ 在乎画的灵魂是否能够给你一点启发。好吧，讲这么学术的东西，还是用dot来画吧，看起来好正规呢。
 
@@ -19,13 +10,10 @@ FBI Warning
 
 这里面很多很装逼的单词，它们都是 *斜体* ，就算没看懂，把这些词记住也足够<ruby>装一阵子逼了<rt>买一阵子萌了</rt></ruby>。
 
-
-<a id="org7ce30ed"></a>
-
 # 第一部分：<ruby>范畴论<rt>Catergory Theory</rt></ruby>
 
 
-<a id="org40bcb20"></a>
+<a id="org055de87"></a>
 
 ## *Category*
 
@@ -65,7 +53,7 @@ class Category (c :: * -> * -> *) where
 <ruby>简单吧<rt>hen nan ba</rt></ruby>?还没有高数抽象呢。
 
 
-<a id="orge66bef3"></a>
+<a id="org0d92e1d"></a>
 
 ### *Hask*
 
@@ -101,20 +89,20 @@ id :: (->) a a
 ```
 
 
-<a id="org178a8c1"></a>
+<a id="orgff181b0"></a>
 
 ### *Duel*
 
 每个 Category还有一个镜像，什么都一样，除了箭头是反的
 
 
-<a id="orge14ae02"></a>
+<a id="orgb77fb63"></a>
 
 ## *<ruby>函子<rt> Functor</rt></ruby>*
 
 两个范畴中间可以用叫 Functor 的东西来连接起来，简称 T。
 
-![img](images/functor.svg "Functor C D G, 从 C 到 D 范畴的Functor G")
+![img](images/functor.svg "Functor C D T, 从 C 到 D 范畴的Functor T")
 
 所以大部分把Functor/Monad比喻成盒子其实在定义上是错的，虽然这样比喻比较容易理解，在使用上问题也不大。但是，Functor只是从一个范畴到另一个范畴的映射关系而已。
 
@@ -125,13 +113,13 @@ id :: (->) a a
     -   1<sub>C</sub>(~>) = ~>
 
 ```haskell
-class (Category a, Category b) => Functor a b t where
+class (Category c, Category d) => Functor c d t where
   fmap :: c a b -> d (t a) (t b)
 ```
 
-`Functor a b t` 这表示从范畴 a 到范畴 b 的一个 Functor t
+`Functor c d t` 这表示从范畴 c 到范畴 d 的一个 Functor t
 
-如果把范畴 a 和 b 都限制到 Hask 范畴
+如果把范畴 c 和 d 都限制到 Hask 范畴
 
 ```haskell
 class Functor (->) (->) t where
@@ -152,7 +140,7 @@ class Functor t where
 这里的 fmap 就是 T(~>)，在 Hask 范畴上，所以是 T(->), 这个箭头是函数，所以也能表示成 T(f) 如果 `f:: a -> b`
 
 
-<a id="orgcea1901"></a>
+<a id="orgb26b1d7"></a>
 
 ## *<ruby>Cat<rt> +猫+</rt></ruby>*
 
@@ -161,7 +149,7 @@ class Functor t where
 已经没法讲了，看 TODO 图吧
 
 
-<a id="orgc187241"></a>
+<a id="orgd15ec42"></a>
 
 ## *<ruby>自然变换<rt>Natural Transformations</rt></ruby>*
 
@@ -202,7 +190,7 @@ type NatHask f g = f a -> g a
 感觉到达三维已经是极限了，尼玛还有完没完了，每升一个维度还要起这么多装逼的名字，再升维度就要一脸懵逼了呢。虽然维度不算太高，但是已经不能用简单的图来描述了，所以需要引入 String Diagram。
 
 
-<a id="org67e6596"></a>
+<a id="orgbc9465e"></a>
 
 ## String Diagram
 
@@ -210,12 +198,12 @@ String Diagram 的概念很简单，就是点变线线变点。
 
 当有了自然变换之后，没法表示了呀，那原来的点和线都升一维度，变成线和面，这样，就腾出一个点来表示自然变换了。
 
-![img](https://www.evernote.com/l/ABecC0oxzthLE5w382ydpghjjHjpw2UFqkgB/image.png "String Diagram：自然变换是点，Functor是线，范畴是面")
+![](https://www.evernote.com/l/ABecC0oxzthLE5w382ydpghjjHjpw2UFqkgB/image.png "String Diagram：自然变换是点，Functor是线，范畴是面")
 
 compose的方向是从右往左，从下到上。
 
 
-<a id="orgc86fc4f"></a>
+<a id="org759d03f"></a>
 
 ## *Adjunction Functor* 伴随函子
 
@@ -244,18 +232,18 @@ f':: b -> a
 
 伴随函子的 FG 组合是 C 范畴的 id 函子 F . G = 1<sub>c</sub>
 
-![img](https://www.evernote.com/l/ABd_ole4GrRMGJ82dcTN4Du4x0b1CShrinsB/image.png "伴随函子的两个Functor组合, 左侧为 F &eta;, 右侧为 &epsilon; F")
+![](https://www.evernote.com/l/ABd_ole4GrRMGJ82dcTN4Du4x0b1CShrinsB/image.png "伴随函子的两个Functor组合, 左侧为 F &eta;, 右侧为 &epsilon; F")
 
 Functor 不仅横着可以组合，竖着(自然变换维度)也是可以组合的，因为自然变换是 Functor 范畴的箭头。
 
-![img](https://www.evernote.com/l/ABcPa4yf4XpENptngB9xFoJRfHffZ8GPtIoB/image.png "F &eta; . &epsilon; F = F")
+![](https://www.evernote.com/l/ABcPa4yf4XpENptngB9xFoJRfHffZ8GPtIoB/image.png "F &eta; . &epsilon; F = F")
 
 当到组合 F &eta; . &epsilon; F 得到一个弯弯曲曲的 F 时，我们可以拽着F的两段一拉，就得到了直的 F。
 
 String Diagram 神奇的地方是所有线都可以拉上下两端，这个技巧非常有用，在之后的单子推导还需要用到。
 
 
-<a id="orgd84eddd"></a>
+<a id="org02cc6c4"></a>
 
 ## 从伴随函子到 <ruby>单子<rt> Monad</rt></ruby>
 
@@ -265,7 +253,7 @@ String Diagram 神奇的地方是所有线都可以拉上下两端，这个技�
 -   有一个从 i<sub>c</sub> 到 T 的自然变化 &eta; (eta)
 -   有一个从 T<sup>2</sup> 到 T 的自然变化 &mu; (mu)
 
-![img](https://www.evernote.com/l/ABexO3KphElMrZ_5scYTDxjOelA5cigrHCoB/image.png)
+![](https://www.evernote.com/l/ABexO3KphElMrZ_5scYTDxjOelA5cigrHCoB/image.png)
 
 ```haskell
 class Endofunctor c t => Monad c t where
@@ -283,14 +271,14 @@ class Endofunctor m => Monad m where
 
 要推出单子的 &eta; 变换，只需要让 FG = T
 
-![img](https://www.evernote.com/l/ABfg4vXk8DJGRZGPRv6A_ifmOykudKxqyqUB/image.png "伴随函子的 &epsilon; 就是单子的 &eta;")
+![](https://www.evernote.com/l/ABfg4vXk8DJGRZGPRv6A_ifmOykudKxqyqUB/image.png "伴随函子的 &epsilon; 就是单子的 &eta;")
 
 同样的，当 FG = T, F &eta; G 就可以变成 &mu;
 
-![img](https://www.evernote.com/l/ABf_3PObVKVLI4xOK9ijFcnC0hZ29TJIZVsB/image.png "伴随函子的 F &eta; G 是函子的 &mu;")
+![](https://www.evernote.com/l/ABf_3PObVKVLI4xOK9ijFcnC0hZ29TJIZVsB/image.png "伴随函子的 F &eta; G 是函子的 &mu;")
 
 
-<a id="org7486dd8"></a>
+<a id="org2559f27"></a>
 
 ### 三角等式
 
@@ -298,9 +286,9 @@ class Endofunctor m => Monad m where
 
 要推出三角等式只需要组合 F &eta; G 和 &epsilon; F G
 
-![img](https://www.evernote.com/l/ABemC0HnOQ1PIpiI6Y-34nEm4CSoITFuB64B/image.png "F &eta; G . &epsilon; F G = F G")
+![](https://www.evernote.com/l/ABemC0HnOQ1PIpiI6Y-34nEm4CSoITFuB64B/image.png "F &eta; G . &epsilon; F G = F G")
 
-![img](https://www.evernote.com/l/ABePUH_43tVLgJJ8y4QNKhr10UnxWlWnpI0B/image.png "F &eta; G . &epsilon; F G= F G 对应到Monad就是 &mu; . &eta; T = T")
+![](https://www.evernote.com/l/ABePUH_43tVLgJJ8y4QNKhr10UnxWlWnpI0B/image.png "F &eta; G . &epsilon; F G= F G 对应到Monad就是 &mu; . &eta; T = T")
 
 换到代码上来说
 
@@ -311,9 +299,9 @@ class Endofunctor m => Monad m where
 
 同样的，左右翻转也成立
 
-![img](https://www.evernote.com/l/ABfdt-llk4dKvY94Pqn5fZFlRt5B9qwii6UB/image.png "F &eta; G . F G &epsilon; = F G")
+![](https://www.evernote.com/l/ABfdt-llk4dKvY94Pqn5fZFlRt5B9qwii6UB/image.png "F &eta; G . F G &epsilon; = F G")
 
-![img](https://www.evernote.com/l/ABcG2YoCCNdHd7pdFViyMBMli12foiuBIsAB/image.png "F &eta; G . F G &epsilon; = F G 对应到 Monad是 &mu; . T &eta; = T")
+![](https://www.evernote.com/l/ABcG2YoCCNdHd7pdFViyMBMli12foiuBIsAB/image.png "F &eta; G . F G &epsilon; = F G 对应到 Monad是 &mu; . T &eta; = T")
 
 T &eta; 就是 fmap eta
 
@@ -328,23 +316,23 @@ m >>= eta = m
 ```
 
 
-<a id="org1495394"></a>
+<a id="org334afe5"></a>
 
 ### 结合律
 
 单子另一大定律是结合律，让我们从伴随函子推起
 
-假设我们现在有函子 F &eta; G 和 函子 F &eta; G F G, compose 起来会变成 F &eta; G . F &eta; G F G ![img](https://www.evernote.com/l/ABfsS4KBjE1Gbrd8AouQJeBVc9u_sqBUzPwB/image.png)
+假设我们现在有函子 F &eta; G 和 函子 F &eta; G F G, compose 起来会变成 F &eta; G . F &eta; G F G ![](https://www.evernote.com/l/ABfsS4KBjE1Gbrd8AouQJeBVc9u_sqBUzPwB/image.png)
 
-用 F G = T ， F &eta; G = &mu; 代换那么就得到了单子的 &mu; . &mu; T ![img](https://www.evernote.com/l/ABc_scvfquxHhKZZ6I51i1hL3f5Oe382IZ0B/image.png)
+用 F G = T ， F &eta; G = &mu; 代换那么就得到了单子的 &mu; . &mu; T ![](https://www.evernote.com/l/ABc_scvfquxHhKZZ6I51i1hL3f5Oe382IZ0B/image.png)
 
-当组合 F &eta; G 和 F G F &mu; G 后，会得到一个镜像的图 ![img](https://www.evernote.com/l/ABcsGipPc8BFL7Yp9NuCfUQQ3W0JntC7JDcB/image.png)
+当组合 F &eta; G 和 F G F &mu; G 后，会得到一个镜像的图 ![](https://www.evernote.com/l/ABcsGipPc8BFL7Yp9NuCfUQQ3W0JntC7JDcB/image.png)
 
-对应到单子的 &mu; . T &mu; ![img](https://www.evernote.com/l/ABdRAkfmbjJMHZNeSNxzc_r2bgeq2MNKrC8B/image.png)
+对应到单子的 &mu; . T &mu; ![](https://www.evernote.com/l/ABdRAkfmbjJMHZNeSNxzc_r2bgeq2MNKrC8B/image.png)
 
 结合律是说 &mu; . &mu; T = &mu; . T &mu; , 即图左右翻转结果是相等的，为什么呢？看单子的String Diagram 不太好看出来，我们来看伴随函子
 
-如果把左图的左边的 &mu; 往上挪一点，右边的 &mu; 往下挪一点，是不是跟右图就一样了 ![img](https://www.evernote.com/l/ABcv0axE5alKiZupUL2SyhrALuS-4DyBfQAB/image.png)
+如果把左图的左边的 &mu; 往上挪一点，右边的 &mu; 往下挪一点，是不是跟右图就一样了 ![](https://www.evernote.com/l/ABcv0axE5alKiZupUL2SyhrALuS-4DyBfQAB/image.png)
 
 结合律反映到代码中就是
 
@@ -355,7 +343,7 @@ mu . fmap mu = mu . mu
 代码很难看出结合在哪里，因为正常的结合律应该是这样的 (1+2)+3 = 1+(2+3)，但是不想加法的维度不一样，这里说的是自然变换维度的结合，可以通过String Diagram 很清楚的看见结合的过程，即 &mu; 左边的两个T和先 &mu; 右边两个 T 是相等的。
 
 
-<a id="org84812df"></a>
+<a id="orgeaaf074"></a>
 
 ## Yoneda lemma / ~~米田共~~ 米田引理
 
@@ -382,7 +370,7 @@ unembed 是反过来， `(a -> b) -> f b` 变成 `f a`
 ![img](images/yoneda-lemma.svg "也就是说，图中无论知道a->b 再加上任意一个 F x，都能推出另外一个 F")
 
 
-<a id="org3e6746e"></a>
+<a id="orgc9d248a"></a>
 
 ### Rank N Type
 
@@ -419,7 +407,7 @@ f 在 `f True` 是确定 a 是 Boolean，在rank1多态是时就确定了 `a->a`
 所以到 `f 'a'` 类型就挂了。
 
 
-<a id="orgc62a7fc"></a>
+<a id="org67bc110"></a>
 
 ## *Kleisli Catergory*
 
@@ -459,23 +447,8 @@ tb >>= f = mu . fmap f tb
 ```
 
 
-<a id="org46d983e"></a>
+<a id="org50ed736"></a>
 
 ## Summary
 
-第一部分理论部分都讲完了， 如果你读到这里还没有被这些<ruby>吊炸天<rt>乱七八糟</rt></ruby>的概念搞daze，接下来可以看看它到底跟我们编程有鸟关系呢？第二部分将介绍这些概念产生的一些实用的monad
-
--   👉 [第二部分：<ruby>食用猫呢<rt> Practical Monads</rt></ruby>](./part2.md)
--   [第三部分：<ruby>搞基猫呢<rt> Advanced Monads</rt></ruby>](./part3.md)
-
-当然我还没空全部写完，如果有很多人<ruby>预定<rt>只要998</rt></ruby> Gumroad 上的 <script src="https://gumroad.com/js/gumroad.js"></script><a class="gumroad-button" href="https://gum.co/grokking-monad" target="_blank">Grokking Monad</a> 电子书的话，我可能会稍微写得快一些。毕竟，写了也没人感兴趣也怪浪费时间的。不过，我猜也没几个人能看到这一行，就当是自言自语吧，怎么突然觉得自己好分裂。
-
-
-<a id="org48c54bd"></a>
-
-# References
-
--   <http://dev.stephendiehl.com/hask>
--   <https://en.wikibooks.org/wiki/Haskell/Category_theory>
--   <https://www.youtube.com/watch?v=ZKmodCApZwk>
--   <https://www.youtube.com/watch?v=kiXjcqxVogE&list=PL50ABC4792BD0A086&index=5>
+第一部分理论部分都讲完了， 如果你读到这里还没有被这些<ruby>吊炸天<rt>乱七八糟</rt></ruby>的概念搞daze，接下来可以看看它到底跟我们编程有鸟关系呢？第二部分 -> 处基猫呢，将介绍由这些概念产生的一些实用的初级monad。

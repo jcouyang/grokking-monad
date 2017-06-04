@@ -1,45 +1,21 @@
-- [第二部分：<ruby>食用猫呢<rt> Practical Monads</rt></ruby>](#org36fbf26)
-  - [Identity](#orge020998)
-  - [Maybe](#org9fa09f1)
-  - [Either](#org377efa7)
-    - [Product & Coproduct](#orgf797368)
-    - [Either Monad](#org2c35fd6)
-  - [Validate](#orgd617b22)
-  - [Reader](#org2f34246)
-    - [do notation](#orgd9a95d4)
-  - [Writer](#orgaa3371f)
-  - [State](#org0995559)
-  - [Expection](#org3638020)
-  - [Cont](#orgff354b5)
-  - [Summary](#org6bebeac)
-  - [References](#orgae307f0)
 
--   [第一部分：范畴论](./index.md)
--   **[第二部分：食用猫呢](./part2.md)** 👈
--   [第三部分：搞基猫呢](./part3.md)
+
+<a id="orgc9a3fc1"></a>
+
+# 第二部分：<ruby>食用猫呢<rt> Practical Monads</rt></ruby>
 
 第一部分理论部分都讲完了， 如果你读到这里还没有被这些吊炸天的概念搞daze，接下来可以看看它到底跟我们编程有鸟关系呢？
 
 第二部分将介绍由这些概念产生的一些实用的monad instances，这些 monad 都通过同样的抽象方式，解决了分离计算与副作用的工作。
 
-最后一部分，我们还可以像 IO monad 一样，通过 free 或者 Eff 自定义自己的计算，和可能带副作用的解释器。
-
-
-<a id="org36fbf26"></a>
-
-# 第二部分：<ruby>食用猫呢<rt> Practical Monads</rt></ruby>
-
-一些有用的 Monad instances
-
-
-<a id="orge020998"></a>
+<a id="org79030e1"></a>
 
 ## Identity
 
 这可能是最简单的 monad 了。不包含任何计算
 
 ```haskell
-newtype Identity a = Identity { runIdentity :: a }
+newtype Identity a = Identity { runIdentity :: a } 
 ```
 
 这里使用 `newtype` 而不是 `data` 是因为 `Identity` 与 `runIdentity` 是 isomorphic （同构，忘了的话回去翻第一部分）
@@ -81,7 +57,7 @@ instance Monad Identity where
 Identity 看起来什么也没有干，就跟 identity 函数一样，但是在后面讲到 State monad时你会发现他的价值。
 
 
-<a id="org9fa09f1"></a>
+<a id="org5ce1811"></a>
 
 ## Maybe
 
@@ -107,7 +83,7 @@ instance Functor Maybe where
   fmap f (Just a) = Just (f a)
 ```
 
-![img](https://www.evernote.com/l/ABeKvGaM2S1LV5QzdmQv_U98pCX164j7-2MB/image.png "fmap :: (a -> b) -> f a -> f b")
+![](https://www.evernote.com/l/ABeKvGaM2S1LV5QzdmQv_U98pCX164j7-2MB/image.png "fmap :: (a -> b) -> f a -> f b")
 
 然后，还实现 Monad
 
@@ -118,7 +94,7 @@ instance Monad Maybe where
   Nothing >>= f = Nothing
 ```
 
-![img](https://www.evernote.com/l/ABfAhPgWI_5Awbov_2gLY_BcB9CwKyIJZjYB/image.png "还记得第一部分提到的 Kleisli 范畴吗？")
+![](https://www.evernote.com/l/ABfAhPgWI_5Awbov_2gLY_BcB9CwKyIJZjYB/image.png "还记得第一部分提到的 Kleisli 范畴吗？")
 
 Maybe 有用在于能合适的处理 *<ruby>偏函数<rt> Partial Function</rt></ruby>* 的返回值。偏函数相对于<ruby>全函数<rt> Total Function</rt></ruby>，是指只能对部分输入返回输出的函数。
 
@@ -131,7 +107,7 @@ Maybe 有用在于能合适的处理 *<ruby>偏函数<rt> Partial Function</rt><
 如果使用 Maybe 把偏函数处理不了的输入都返回成 Nothing，这样结果依然保持 Maybe 类型，不影响后面的计算。
 
 
-<a id="org377efa7"></a>
+<a id="orgd439ade"></a>
 
 ## Either
 
@@ -142,7 +118,7 @@ data Either a b = Left a | Right b
 ```
 
 
-<a id="orgf797368"></a>
+<a id="orgd08ee62"></a>
 
 ### Product & Coproduct
 
@@ -150,20 +126,20 @@ data Either a b = Left a | Right b
 
 那么我们先来看看什么是 Coproduct
 
-![img](https://www.evernote.com/l/ABeCtsXrN7xCWqa7bsNAU0eVQVTDdkRKqVEB/image.png "Coproduct")
+![](https://www.evernote.com/l/ABeCtsXrN7xCWqa7bsNAU0eVQVTDdkRKqVEB/image.png "Coproduct")
 
 像这样，能通过两个箭头到达同一个东西，就是 Coproduct。这里箭头 `Left` 能让 `a` 到 `Either a b` ， 箭头 `Right` 也能让 `b` 到达 `Either a b`
 
-有意思的是还肯定存在一个 Coproduct 和 箭头，使得下图成立 ![img](https://www.evernote.com/l/ABfP9Sz8diJFxoXCJpjHeo_gF5JAmsiFvPYB/image.png)
+有意思的是还肯定存在一个 Coproduct 和 箭头，使得下图成立 ![](https://www.evernote.com/l/ABfP9Sz8diJFxoXCJpjHeo_gF5JAmsiFvPYB/image.png)
 
 箭头反过来，就是 Product, 比如 Tuple
 
-![img](https://www.evernote.com/l/ABea91BEgH5OH41WorLYjqichYC0rmVCAXMB/image.png "Product")
+![](https://www.evernote.com/l/ABea91BEgH5OH41WorLYjqichYC0rmVCAXMB/image.png "Product")
 
 Tuple 的 `fst` 箭头能让 `(a, b)` 到达 `a` 对象，而箭头 `snd` 能让其到达 `b` 对象。
 
 
-<a id="org2c35fd6"></a>
+<a id="orgc8265c4"></a>
 
 ### Either Monad
 
@@ -197,12 +173,7 @@ instance Monad (Either a) where
 很明显的，>>= 任何函数到<ruby>左边<rt> Left</rt></ruby> 都不会改变，只有 >>= 右边才能产生新的计算。
 
 
-<a id="orgd617b22"></a>
-
-## Validate
-
-
-<a id="org2f34246"></a>
+<a id="org22b30d0"></a>
 
 ## Reader
 
@@ -245,7 +216,7 @@ instance Monad (Reader e) where
 -   f (g e) 就是 `Reader e a`
 -   再 run 一把最后得到 a
 
-![img](https://www.evernote.com/l/ABeL9xOcX7VNmJdaq49OSQf0ejRLsz_EWZ0B/image.png "f 函数，接收 a 返回一个 从 e 到 a 的 Reader")
+![](https://www.evernote.com/l/ABeL9xOcX7VNmJdaq49OSQf0ejRLsz_EWZ0B/image.png "f 函数，接收 a 返回一个 从 e 到 a 的 Reader")
 
 让我们来看看如何使用 Reader
 
@@ -269,12 +240,12 @@ runHelloworld = runReader helloworld $ Env "Jichao" "Ouyang"
 
 这段代码很简单，helloworld 负责打招呼，也就是在名字前面加个 "Hello"，而跟谁打招呼，这个函数并不关心，而单纯的是向 Environment <ruby>问<rt>asks</rt></ruby> 就好。
 
-![img](https://www.evernote.com/l/ABejjs0RksRL_LOo2jgoUk1bT54BBfMCqNAB/image.png "asks 可以将 e -> a 的函数变换成 Reader e a")
+![](https://www.evernote.com/l/ABejjs0RksRL_LOo2jgoUk1bT54BBfMCqNAB/image.png "asks 可以将 e -> a 的函数变换成 Reader e a")
 
-在运行时，可以提供给 Reader 的输入 Env fistname lastname。 ![img](https://www.evernote.com/l/ABc5cVh6zMND1KHY42FYTyRWzdfPcP4YYdEB/image.png)
+在运行时，可以提供给 Reader 的输入 Env fistname lastname。 ![](https://www.evernote.com/l/ABc5cVh6zMND1KHY42FYTyRWzdfPcP4YYdEB/image.png)
 
 
-<a id="orgd9a95d4"></a>
+<a id="org7e3e17f"></a>
 
 ### do notation
 
@@ -293,7 +264,7 @@ helloworld = (asks firstName) >>=
 ```
 
 
-<a id="orgaa3371f"></a>
+<a id="orgc4546ff"></a>
 
 ## Writer
 
@@ -318,7 +289,7 @@ output = runWriter example
 Writer 的定义更简单
 
 ```haskell
-newtype Writer l a = Writer { runWriter :: (a,l) }
+newtype Writer l a = Writer { runWriter :: (a,l) } 
 ```
 
 里面只是一个 tuple 而已
@@ -339,14 +310,14 @@ instance (Monoid w) => Monad (Writer w) where
 -   f 的类型为 `a -> Writer l a`
 -   `runWriter $ f a` 返回 `(a, l)`
 
-![img](https://www.evernote.com/l/ABeB64fSK2BO27_IffFrMrIYjglJrp5rb5sB/image.png)
+![](https://www.evernote.com/l/ABeB64fSK2BO27_IffFrMrIYjglJrp5rb5sB/image.png)
 
 所以在 >>= 时，我们先把 f a 返回的 Writer run了，然后把两次 log `mappend` 起来。
 
-![img](https://www.evernote.com/l/ABeLJJ_cN0JJa5PqDPVlKk4Tt0oAvBKnxf4B/image.png)
+![](https://www.evernote.com/l/ABeLJJ_cN0JJa5PqDPVlKk4Tt0oAvBKnxf4B/image.png)
 
 
-<a id="org0995559"></a>
+<a id="org3f8dcaa"></a>
 
 ## State
 
@@ -371,11 +342,11 @@ instance Monad (State s) where
 
 return 很简单，就不用解释了。
 
-![img](https://www.evernote.com/l/ABdBcGXH7T9FDoePyOg564ey9Kg7kndHtNUB/image.png)
+![](https://www.evernote.com/l/ABdBcGXH7T9FDoePyOg564ey9Kg7kndHtNUB/image.png)
 
 x 类型是 `s -> (a, s)` ,所以 x s 之后会返回 结果和状态。也就是运行当前 State，把结果 v 传给函数 f，返回的 State 再接着上次状态运行。
 
-![img](https://www.evernote.com/l/ABdHal0u69ZNBqHpPWJp-Dc6KC_yvQ1t3tsB/image.png "State x >>= f 后runState的数据流（啊啊啊，画歪了，感觉需要脉动一下）")
+![](https://www.evernote.com/l/ABdHal0u69ZNBqHpPWJp-Dc6KC_yvQ1t3tsB/image.png "State x >>= f 后runState的数据流（啊啊啊，画歪了，感觉需要脉动一下）")
 
 使用起来也很方便，State 提供 `get` `put` `moidfy` 三个方便的函数可以生成修改状态的State monad
 
@@ -393,32 +364,188 @@ main = print $ show $ runState test 3
 ```
 
 
-<a id="org3638020"></a>
+<a id="orgb4902a3"></a>
 
-## Expection
+## Validation
+
+如果你有注意到，前面的 Either 可以用在处理错误和正确的路径分支，但是问题是错误只发生一次。
+
+> Validation 没有在标准库中，但是我觉得好有用啊，你可以在 ekmett 的 [github](https://github.com/ekmett/either) 中找到源码
+
+想象一下这种场景，用户提交一个表单，我们需要对每一个field进行验证，如果有错误，需要把错误的哪几个field的错误消息返回。显然如果使用 Either 来做，只能返回第一个field的错误信息，后面的计算都会被跳过。
+
+针对这种情况， Validation 更适合
+
+```haskell
+data Validation e a = Failure e | Success a
+```
+
+ADT定义看起来跟 Either 是一样的，不同的是 <ruby>左边<rt>Left</rt></ruby> Failure 是 <ruby>含幺半群<rt>Monoid</rt></ruby>
 
 
-<a id="orgff354b5"></a>
+<a id="org198d706"></a>
+
+### <ruby>含幺半群<rt>Monoid</rt></ruby>
+
+monoid 首先得是 <ruby>半群<rt>Semigroup</rt></ruby> ，然后再 含幺。
+
+```haskell
+class Semigroup a where
+  (<>) :: a -> a -> a
+  (<>) = mappend
+```
+
+半群非常简单，只要是可以 `<>` (mappend) 的类型就是了。
+
+含幺只需要有一个 `mempty` 的 幺元就行
+
+```haskell
+class Monoid a where
+  mempty  :: a
+  mappend :: a -> a -> a
+```
+
+比如 List 就是 Semigroup
+
+```haskell
+instance Semigroup [a] where
+  (<>) = (++)
+```
+
+也是 Monoid
+
+```haskell
+instance Monoid [a] where
+  mempty  = []
+  mappend = (++)
+```
+
+Monoid 的 `<>` 满足：
+
+-   mempty <> a = a
+-   a <> b <> c = a <> (b <> c)
+
+
+<a id="org17daaef"></a>
+
+### 回到 Validation
+
+现在让 Failure e 满足 Monoid，就可以 `mappend` 错误信息了。
+
+```haskell
+instance Semigroup e => Semigroup (Validation e a) where
+  Failure e1 <> Failure e2 = Failure (e1 <> e2)
+  Failure _  <> Success a2 = Success a2
+  Success a1 <> Failure _  = Success a1
+  Success a1 <> Success _  = Success a1
+```
+
+下来，我们用一个简单的例子来看看 Validation 与 Either 有什么区别。
+
+假设我们有一个form，需要输入姓名与电话，验证需要姓名是非空而电话是11位数字。
+
+首先，我们需要有一个函数去创建包含姓名和电话的model
+
+```haskell
+data Info = Info {name: String, phone: String} deriving Show
+```
+
+然后我们需要验证函数
+
+```haskell
+notEmpty :: String -> String -> Validation [String] String
+notEmpty desc "" = Failure [desc <> " cannot be empty!"]
+notEmpty _ field = Success field
+```
+
+notEmpty 检查字符是否为空，如果是空返回 Failure 包含错误信息，若是非空则返回 Success 包含 field
+
+同样的可以创建 11位数字的验证函数
+
+```haskell
+phoneNumberLength :: String -> String -> Validation [String] String
+phoneNumberLength desc field | (length field) == 11 = Success field
+                             | otherwise = Failure [desc <> "'s length is not 11"]
+```
+
+实现 Validation 的 Applicative instance，这样就可以把函数调用lift成带有验证的 Applicative
+
+```haskell
+instance Semigroup e => Applicative (Validation e) where
+  pure = Success
+  Failure e1 <*> Failure e2 = Failure e1 <> Failure e2
+  Failure e1 <*> Success _  = Failure e1
+  Success _  <*> Failure e2 = Failure e2
+  Success f <*> Success a = Success (f a)
+```
+
+-   失败应用到失败会 concat 起来
+-   失败跟应用或被成功应用还是失败
+-   只有成功应用到成功才能成功，这很符合验证的逻辑，一旦验证中发生任何错误，都应该返回失败。
+
+```haskell
+createInfo :: String -> String -> Validation [String] Info
+createInfo name phone = Info <$> notEmpty "name" name <*> phoneNumberLength "phone" phone
+```
+
+现在我们就可以使用带validation的 createInfo 来安全的创建 Info 了
+
+```haskell
+createInfo "jichao" "12345678910" -- Success Info "jichao" "12345678910"
+createInfo "" "123" -- Failure ["name cannot be empty!", "phone's length is not 11"]
+```
+
+
+<a id="org4a836f9"></a>
 
 ## Cont
 
+Cont 是 <ruby>Continuation Passing Style<rt>CPS</rt></ruby> 的 monad，也就是说，它是包含 cps 计算 monad。
 
-<a id="org6bebeac"></a>
+先看一下什么是 CPS，比如有一个加法
+
+```haskell
+add :: Int -> Int -> Int
+add = (+)
+```
+
+但是如果你想在算法加法后，能够继续进行一个其他的计算，那么就可以写一个 cps版本的加法
+
+```haskell
+addCPS :: Int -> Int -> (Int -> r) -> r
+addCPS a b k = k (a + b)
+```
+
+非常简单，现在我们可以看看为什么需要一个 Cont monad 来包住 CPS 计算，首先，来看 ADT 定义
+
+```haskell
+newtype Cont r a = Cont { runCont :: ((a -> r) -> r) }
+```
+
+又是一个同构的类型，Cont 构造器只需要一个 runCount，也就是让他能继续计算的一个函数。
+
+完了之后来把之前的 addCPS 改成 Cont
+
+```haskell
+add :: Int -> Int -> Cont k Int
+add a b = return (a + b)
+```
+
+注意到 addCPS 接收到 a 和 b 之后返回的类型是 `(Int -> r) -> r` ，而 Cont 版本的 `add` 返回 `Cont k Int`
+
+明显构造 `Cont k Int` 也正是需要 `(Int -> r) -> r` ，所以 Cont 就是算了 k 的抽象了。
+
+```haskell
+instance Monad (Cont r) where
+    return a       = Cont $ \k -> k a
+    (Cont c) >>= f = Cont $ \k -> c (\a -> runCont (f a) k)
+```
+
+
+<a id="orgbfe15f0"></a>
 
 ## Summary
 
 第二部分食用部分也讲完了， 不知是否以及大致了解了monad的尿性各种基本玩法呢？通过这些常用的基本的 monad instance，解决命令式编程中的一些简单问题应该是够了。
 
 不过，接下来还有更变态的猫，就先叫她 ~~搞基~~ 猫呢好了。
-
--   👉 [第三部分：<ruby>搞基猫呢<rt> Advanced Monads</rt></ruby>](./part3.md)
-
-当然我又还没空全部写完，如果还有很多人<ruby>预定<rt>只要998</rt></ruby> Gumroad 上的 <script src="https:https://gumroad.com/js/gumroad.js"></script><a class="gumroad-button" href="https:https://gum.co/grokking-monad" target="_blank">Grokking Monad</a> 电子书的话，我可能会稍微写得快一些。毕竟，写了也没人感兴趣也怪浪费时间的。不过，我猜也没几个人能看到这一行，就当是我又自言自语吧，怎么又突然觉得自己好分裂，诶~，为什么我要说又？
-
-
-<a id="orgae307f0"></a>
-
-## References
-
--   <https:https://wiki.haskell.org/All_About_Monads>
--   <http:https://dev.stephendiehl.com/hask/>
