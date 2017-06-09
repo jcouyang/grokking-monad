@@ -1,2 +1,0 @@
-#!/bin/bash
-sed -i ''  -e 's/\[img\](\/\//[](https:\/\//g' index.md

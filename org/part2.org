@@ -4,11 +4,7 @@
 #+OPTIONS: ^:t
 #+MACRO: ruby @@html:<ruby>$1<rt>$2</rt></ruby>@@
 
-第一部分理论部分都讲完了， 如果你读到这里还没有被这些吊炸天的概念搞daze，接下来可以看看它到底跟我们编程有鸟关系呢？
 
-第二部分将介绍由这些概念产生的一些实用的monad instances，这些 monad 都通过同样的抽象方式，解决了分离计算与副作用的工作。
-
-最后一部分，我们还可以像 IO monad 一样，通过 free 或者 Eff 自定义自己的计算，和可能带副作用的解释器。
 * COMMENT
 #+BEGIN_SRC emacs-lisp
 (require 'ob-haskell)
@@ -18,7 +14,12 @@
 : ob-haskell
 
 * 第二部分：{{{ruby(食用猫呢, Practical Monads)}}}
-一些有用的 Monad instances
+第一部分理论部分都讲完了， 如果你读到这里还没有被这些吊炸天的概念搞daze，接下来可以看看它到底跟我们编程有鸟关系呢？
+
+第二部分将介绍由这些概念产生的一些实用的monad instances，这些 monad 都通过同样的抽象方式，解决了分离计算与副作用的工作。
+
+最后一部分，我们还可以像 IO monad 一样，通过 free 或者 Eff 自定义自己的计算，和可能带副作用的解释器。
+
 ** COMMENT Applicative
 *** Alternative
 *** Arrow

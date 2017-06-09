@@ -1,0 +1,59 @@
+#+TITLE: 范畴论完全装逼手册(三) / Grokking Monad
+#+Date: <2017-02-10 Fri>
+#+AUTHOR: 欧阳继超
+#+OPTIONS: ^:t
+#+MACRO: ruby @@html:<ruby>$1<rt>$2</rt></ruby>@@
+
+* COMMENT
+#+BEGIN_SRC emacs-lisp
+(require 'ob-haskell)
+#+END_SRC
+
+#+RESULTS:
+: ob-haskell
+
+* 第三部分:{{{ruby(搞基猫呢,Advanced Monads)}}}
+第二部分介绍了一些实用的monad instances，这些 monad 都通过同样的抽象方式，解决了分离计算与副作用的工作。
+
+通过它们可以解决大多数的基本问题，但是正对于复杂业务逻辑，我们可能还需要一些更高阶的 monad 或者 pattern。
+
+当有了第一部分的理论基础和第二部分的实践，这部分要介绍的猫其实并不是很搞基，也不是很难懂。通过这一部分介绍的搞基猫呢，我们还可以像 IO monad 一样，通过 free 或者 Eff 自定义自己的计算，和可能带副作用的解释器。
+
+** RWS
+RWS 是缩写 Reader Writer State monad, 所以明显是三个monad的合体。如果已经忘记 Reader Writer 或者 State，请到第二部分复习一下。
+
+一旦把三个 monad 合体，意味着可以使用三个 monad 的方法，比如，可以同时使用 ask, get, put, 和 tell
+
+#+BEGIN_SRC haskell
+  readWriteState = do
+    e <- ask
+    a <- get
+    let res = a + e
+    put res
+    tell [res]
+  runRWS readWriteState 1 2
+#+END_SRC
+
+注意到跟 Reader 和 State 一样，run的时候输入初始值
+
+其中 1 为 Reader 的值，2 为 State 的
+
+** IN PROGRESS Monad Transform
+:LOGBOOK:
+- State "IN PROGRESS" from "TODO"       [2017-06-09 Fri 21:33]
+:END:
+你会发现 RWS一起用挺好的，能读能写能打 l og，但是已经固定好搭配了，只能是RWS，如果我还想加入其它的 Monad，该怎么办呢？
+
+这时候，简单的解决方案是加 T，比如对于 Reader，我们有 ReaderT，RWS，也有对应的 RWST。其中 T 代表 Transform。
+
+
+*** ReaderT
+
+
+
+
+** TODO MonadPlus
+** TODO MonadFix
+** TODO ST
+** TODO Free Monad
+** TODO Eff

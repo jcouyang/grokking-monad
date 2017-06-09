@@ -67,3 +67,9 @@ _book
 book.epub
 book.pdf
 book.mobi
+SUMMARY.md
+part1.md
+part2.md
+part3.md
+index.md
+book/images
