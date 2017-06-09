@@ -293,7 +293,7 @@ compose的方向是从右往左，从下到上。
 
 让我们来看看什么叫有来回。
 
-https://www.evernote.com/l/ABdLVPGwUI5FX4WJpCP26KQ4tjuQBYzbk3MB/image.png
+https://www.evernote.com/l/ABcAAZt8nvxH4bq0EXQ-Jm5eNEKpCtrQe70B/image.png
 
 其中：
 
@@ -315,7 +315,7 @@ f':: b -> a
 伴随函子的 FG 组合是 C 范畴的 id 函子 F . G = 1_c
 
 #+CAPTION: 伴随函子的两个Functor组合, 左侧为 F \eta, 右侧为 \epsilon F
-https://www.evernote.com/l/ABd_ole4GrRMGJ82dcTN4Du4x0b1CShrinsB/image.png
+https://www.evernote.com/l/ABdvTPL9liFBrbtLJampYbYWvWmxxe50ossB/image.png
 
 Functor 不仅横着可以组合，竖着(自然变换维度)也是可以组合的，因为自然变换是 Functor 范畴的箭头。
 
