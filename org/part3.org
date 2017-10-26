@@ -84,7 +84,22 @@ instance (Monad m) => Monad (ReaderT e m) where
 
 重点需要体会的是, Reader 可以越过 Maybe 直接操作到 Num, 完了再包回来.
 
+有了 ReaderT, 搭配 Id Monad 就很容易创建出来 Reader Monad
+
+#+BEGIN_SRC haskell
+type Reader r a= ReaderT r Identity a
+#+END_SRC
+
+越过 Id read 到 Id 内部, 完了再用 Id 包回来, 不就是 Reader 了么
+
+#+BEGIN_SRC haskell
+ReaderT { runReaderT :: r -> Identity a }
+-- Identity a is a
+ReaderT { runReaderT :: r -> a }
+#+END_SRC
+
 ** TODO MonadPlus
+
 ** TODO MonadFix
 ** TODO ST
 ** TODO Free Monad
