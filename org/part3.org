@@ -42,15 +42,47 @@ RWS 是缩写 Reader Writer State monad, 所以明显是三个monad的合体。�
 :LOGBOOK:
 - State "IN PROGRESS" from "TODO"       [2017-06-09 Fri 21:33]
 :END:
-你会发现 RWS一起用挺好的，能读能写能打 l og，但是已经固定好搭配了，只能是RWS，如果我还想加入其它的 Monad，该怎么办呢？
+你会发现 RWS一起用挺好的，能读能写能打 log，但是已经固定好搭配了，只能是 RWS ，如果我还想加入其它的 Monad，该怎么办呢？
 
 这时候，简单的解决方案是加 T，比如对于 Reader，我们有 ReaderT，RWS，也有对应的 RWST。其中 T 代表 Transform。
 
-
 *** ReaderT
 
+让我来通过简单的ReaderT来解释到底什么是T吧, 首先跟 Reader 一样我们有个 runReaderT
 
+#+BEGIN_SRC haskell
+newtype ReaderT e m a = ReaderT { runReaderT :: e -> m a }
+#+END_SRC
 
+比较一下 Reader 的定义
+#+BEGIN_SRC haskell
+newtype Reader e a = Reader { runReader :: (e -> a) }
+#+END_SRC
+
+有没有发现多了一个 m, 也就是说, =runReader e= 会返回 a, 但是 =runReaderT e= 则会返回 =m a=
+
+#+BEGIN_SRC haskell
+instance (Monad m) => Monad (ReaderT e m) where
+    return   = lift . return
+    r >>= k  = ReaderT $ \ e -> do
+        a <- runReaderT r e
+        runReaderT (k a) e
+#+END_SRC
+
+再看看 monad 的实现, 也是一样的, 先 run 一下 =r e= 得到结果 =a=, 应用函数 =k= 到 =a=, 再 run 一把.
+
+问题是, 这里的 =return= 里面的 =lift= 是哪来的?
+
+#+BEGIN_SRC haskell
+  instance MonadTrans (ReaderT e) where
+    lift m = ReaderT (const m)
+#+END_SRC
+
+这个函数 =lift= 被定义在 MonadTrans 的实例中, 简单的把 m 放到 ReaderT 结果中.
+
+例如, =lift (Just 1)= 会得到 ReaderT, 其中 e 随意, m 为 Maybe Num
+
+重点需要体会的是, Reader 可以越过 Maybe 直接操作到 Num, 完了再包回来.
 
 ** TODO MonadPlus
 ** TODO MonadFix

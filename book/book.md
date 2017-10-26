@@ -9,7 +9,7 @@ FBI Warning
 <script src="https://gumroad.com/js/gumroad-embed.js"></script><div class="gumroad-product-embed" data-gumroad-product-id="grokking-monad"><a href="https://gumroad.com/l/grokking-monad"><img src="https://blog.oyanglul.us/grokking-monad/cover.jpg"></img></a></div>
 
 
-<a id="orgcfd8c76"></a>
+<a id="org7d4b59e"></a>
 
 # 第一部分：<ruby>范畴论<rt>Catergory Theory</rt></ruby>
 
@@ -22,7 +22,7 @@ FBI Warning
 这里面很多很装逼的单词，它们都是 *斜体* ，就算没看懂，把这些词记住也足够<ruby>装一阵子逼了<rt>买一阵子萌了</rt></ruby>。
 
 
-<a id="orgc64fa0a"></a>
+<a id="orge9e4f0d"></a>
 
 ## *Category*
 
@@ -62,7 +62,7 @@ class Category (c :: * -> * -> *) where
 <ruby>简单吧<rt>hen nan ba</rt></ruby>?还没有高数抽象呢。
 
 
-<a id="org2498593"></a>
+<a id="org4e6a90d"></a>
 
 ### *Hask*
 
@@ -98,14 +98,14 @@ id :: (->) a a
 ```
 
 
-<a id="orgb78ed52"></a>
+<a id="org66e15c6"></a>
 
 ### *Duel*
 
 每个 Category还有一个镜像，什么都一样，除了箭头是反的
 
 
-<a id="orgf0ec0b3"></a>
+<a id="orgea53216"></a>
 
 ## *<ruby>函子<rt> Functor</rt></ruby>*
 
@@ -149,7 +149,7 @@ class Functor t where
 这里的 fmap 就是 T(~>)，在 Hask 范畴上，所以是 T(->), 这个箭头是函数，所以也能表示成 T(f) 如果 `f:: a -> b`
 
 
-<a id="org6794f46"></a>
+<a id="org55c316b"></a>
 
 ## *<ruby>Cat<rt> +猫+</rt></ruby>*
 
@@ -158,7 +158,7 @@ class Functor t where
 已经没法讲了，看 TODO 图吧
 
 
-<a id="org190e609"></a>
+<a id="org9a85fba"></a>
 
 ## *<ruby>自然变换<rt>Natural Transformations</rt></ruby>*
 
@@ -199,7 +199,7 @@ type NatHask f g = f a -> g a
 感觉到达三维已经是极限了，尼玛还有完没完了，每升一个维度还要起这么多装逼的名字，再升维度就要一脸懵逼了呢。虽然维度不算太高，但是已经不能用简单的图来描述了，所以需要引入 String Diagram。
 
 
-<a id="org2460d7b"></a>
+<a id="org2a82c7d"></a>
 
 ## String Diagram
 
@@ -212,7 +212,7 @@ String Diagram 的概念很简单，就是点变线线变点。
 compose的方向是从右往左，从下到上。
 
 
-<a id="org2f065d6"></a>
+<a id="org27bc104"></a>
 
 ## *Adjunction Functor* 伴随函子
 
@@ -220,7 +220,7 @@ compose的方向是从右往左，从下到上。
 
 让我们来看看什么叫有来回。
 
-![img](https://www.evernote.com/l/ABdLVPGwUI5FX4WJpCP26KQ4tjuQBYzbk3MB/image.png)
+![img](https://www.evernote.com/l/ABcAAZt8nvxH4bq0EXQ-Jm5eNEKpCtrQe70B/image.png)
 
 其中：
 
@@ -241,7 +241,7 @@ f':: b -> a
 
 伴随函子的 FG 组合是 C 范畴的 id 函子 F . G = 1<sub>c</sub>
 
-![img](https://www.evernote.com/l/ABd_ole4GrRMGJ82dcTN4Du4x0b1CShrinsB/image.png "伴随函子的两个Functor组合, 左侧为 F &eta;, 右侧为 &epsilon; F")
+![img](https://www.evernote.com/l/ABdvTPL9liFBrbtLJampYbYWvWmxxe50ossB/image.png "伴随函子的两个Functor组合, 左侧为 F &eta;, 右侧为 &epsilon; F")
 
 Functor 不仅横着可以组合，竖着(自然变换维度)也是可以组合的，因为自然变换是 Functor 范畴的箭头。
 
@@ -252,7 +252,7 @@ Functor 不仅横着可以组合，竖着(自然变换维度)也是可以组合�
 String Diagram 神奇的地方是所有线都可以拉上下两端，这个技巧非常有用，在之后的单子推导还需要用到。
 
 
-<a id="org325a287"></a>
+<a id="orge00caca"></a>
 
 ## 从伴随函子到 <ruby>单子<rt> Monad</rt></ruby>
 
@@ -287,7 +287,7 @@ class Endofunctor m => Monad m where
 ![img](https://www.evernote.com/l/ABf_3PObVKVLI4xOK9ijFcnC0hZ29TJIZVsB/image.png "伴随函子的 F &eta; G 是函子的 &mu;")
 
 
-<a id="orgc748867"></a>
+<a id="org7ad7870"></a>
 
 ### 三角等式
 
@@ -325,7 +325,7 @@ m >>= eta = m
 ```
 
 
-<a id="orgd646c19"></a>
+<a id="org864c0b1"></a>
 
 ### 结合律
 
@@ -352,7 +352,7 @@ mu . fmap mu = mu . mu
 代码很难看出结合在哪里，因为正常的结合律应该是这样的 (1+2)+3 = 1+(2+3)，但是不想加法的维度不一样，这里说的是自然变换维度的结合，可以通过String Diagram 很清楚的看见结合的过程，即 &mu; 左边的两个T和先 &mu; 右边两个 T 是相等的。
 
 
-<a id="org6238f72"></a>
+<a id="org9877a22"></a>
 
 ## Yoneda lemma / ~~米田共~~ 米田引理
 
@@ -379,7 +379,7 @@ unembed 是反过来， `(a -> b) -> f b` 变成 `f a`
 ![img](images/yoneda-lemma.svg "也就是说，图中无论知道a->b 再加上任意一个 F x，都能推出另外一个 F")
 
 
-<a id="org287296a"></a>
+<a id="org0702de6"></a>
 
 ### Rank N Type
 
@@ -416,7 +416,7 @@ f 在 `f True` 是确定 a 是 Boolean，在rank1多态是时就确定了 `a->a`
 所以到 `f 'a'` 类型就挂了。
 
 
-<a id="orgccb2a55"></a>
+<a id="org250a1a9"></a>
 
 ## *Kleisli Catergory*
 
@@ -456,14 +456,14 @@ tb >>= f = mu . fmap f tb
 ```
 
 
-<a id="org18f53d8"></a>
+<a id="orga7e6472"></a>
 
 ## Summary
 
 第一部分理论部分都讲完了， 如果你读到这里还没有被这些<ruby>吊炸天<rt>乱七八糟</rt></ruby>的概念搞daze，接下来可以看看它到底跟我们编程有鸟关系呢？第二部分 -> 处基猫呢，将介绍由这些概念产生的一些实用的初级monad。
 
 
-<a id="org0c119db"></a>
+<a id="org646d533"></a>
 
 # 第二部分：<ruby>食用猫呢<rt> Practical Monads</rt></ruby>
 
@@ -474,7 +474,7 @@ tb >>= f = mu . fmap f tb
 最后一部分，我们还可以像 IO monad 一样，通过 free 或者 Eff 自定义自己的计算，和可能带副作用的解释器。
 
 
-<a id="org16a0e8d"></a>
+<a id="orgff780e8"></a>
 
 ## Identity
 
@@ -523,7 +523,7 @@ instance Monad Identity where
 Identity 看起来什么也没有干，就跟 identity 函数一样，但是在后面讲到 State monad时你会发现他的价值。
 
 
-<a id="org897ec7e"></a>
+<a id="orgc992313"></a>
 
 ## Maybe
 
@@ -573,7 +573,7 @@ Maybe 有用在于能合适的处理 *<ruby>偏函数<rt> Partial Function</rt><
 如果使用 Maybe 把偏函数处理不了的输入都返回成 Nothing，这样结果依然保持 Maybe 类型，不影响后面的计算。
 
 
-<a id="orge1b1b19"></a>
+<a id="orgff55a2a"></a>
 
 ## Either
 
@@ -584,7 +584,7 @@ data Either a b = Left a | Right b
 ```
 
 
-<a id="org520520e"></a>
+<a id="orgf74a511"></a>
 
 ### Product & Coproduct
 
@@ -605,7 +605,7 @@ data Either a b = Left a | Right b
 Tuple 的 `fst` 箭头能让 `(a, b)` 到达 `a` 对象，而箭头 `snd` 能让其到达 `b` 对象。
 
 
-<a id="org47b54e6"></a>
+<a id="org745d6ce"></a>
 
 ### Either Monad
 
@@ -639,7 +639,7 @@ instance Monad (Either a) where
 很明显的，>>= 任何函数到<ruby>左边<rt> Left</rt></ruby> 都不会改变，只有 >>= 右边才能产生新的计算。
 
 
-<a id="orgd0bb78e"></a>
+<a id="orgae9811d"></a>
 
 ## Reader
 
@@ -711,7 +711,7 @@ runHelloworld = runReader helloworld $ Env "Jichao" "Ouyang"
 在运行时，可以提供给 Reader 的输入 Env fistname lastname。 ![img](https://www.evernote.com/l/ABc5cVh6zMND1KHY42FYTyRWzdfPcP4YYdEB/image.png)
 
 
-<a id="org2279c09"></a>
+<a id="org674500a"></a>
 
 ### do notation
 
@@ -730,7 +730,7 @@ helloworld = (asks firstName) >>=
 ```
 
 
-<a id="orgc0aa159"></a>
+<a id="orga32687f"></a>
 
 ## Writer
 
@@ -783,7 +783,7 @@ instance (Monoid w) => Monad (Writer w) where
 ![img](https://www.evernote.com/l/ABeLJJ_cN0JJa5PqDPVlKk4Tt0oAvBKnxf4B/image.png)
 
 
-<a id="org27a03e8"></a>
+<a id="org98e5471"></a>
 
 ## State
 
@@ -830,7 +830,7 @@ main = print $ show $ runState test 3
 ```
 
 
-<a id="orgebbc6b0"></a>
+<a id="org2642cac"></a>
 
 ## Validation
 
@@ -849,7 +849,7 @@ data Validation e a = Failure e | Success a
 ADT定义看起来跟 Either 是一样的，不同的是 <ruby>左边<rt>Left</rt></ruby> Failure 是 <ruby>含幺半群<rt>Monoid</rt></ruby>
 
 
-<a id="org93592f9"></a>
+<a id="orgf0615ff"></a>
 
 ### <ruby>含幺半群<rt>Monoid</rt></ruby>
 
@@ -892,7 +892,7 @@ Monoid 的 `<>` 满足：
 -   a <> b <> c = a <> (b <> c)
 
 
-<a id="org6a794e0"></a>
+<a id="org11efaa0"></a>
 
 ### 回到 Validation
 
@@ -962,7 +962,7 @@ createInfo "" "123" -- Failure ["name cannot be empty!", "phone's length is not 
 ```
 
 
-<a id="org94b4f16"></a>
+<a id="org6dee67f"></a>
 
 ## Cont
 
@@ -1008,7 +1008,7 @@ instance Monad (Cont r) where
 ```
 
 
-<a id="org5740f71"></a>
+<a id="org705e5cd"></a>
 
 ## Summary
 
@@ -1017,7 +1017,7 @@ instance Monad (Cont r) where
 不过，接下来还有更变态的猫，就先叫她 ~~搞基~~ 猫呢好了。
 
 
-<a id="orgee76eea"></a>
+<a id="orgaa52d32"></a>
 
 # 第三部分:<ruby>搞基猫呢<rt>Advanced Monads</rt></ruby>
 
@@ -1028,7 +1028,7 @@ instance Monad (Cont r) where
 当有了第一部分的理论基础和第二部分的实践，这部分要介绍的猫其实并不是很搞基，也不是很难懂。通过这一部分介绍的搞基猫呢，我们还可以像 IO monad 一样，通过 free 或者 Eff 自定义自己的计算，和可能带副作用的解释器。
 
 
-<a id="orgfecb47a"></a>
+<a id="orgf151fb5"></a>
 
 ## RWS
 
@@ -1051,46 +1051,83 @@ runRWS readWriteState 1 2
 其中 1 为 Reader 的值，2 为 State 的
 
 
-<a id="org975f416"></a>
+<a id="org93a1bc4"></a>
 
-## Monad Transform
+## IN PROGRESS Monad Transform
 
-你会发现 RWS一起用挺好的，能读能写能打 l og，但是已经固定好搭配了，只能是RWS，如果我还想加入其它的 Monad，该怎么办呢？
+你会发现 RWS一起用挺好的，能读能写能打 log，但是已经固定好搭配了，只能是 RWS ，如果我还想加入其它的 Monad，该怎么办呢？
 
 这时候，简单的解决方案是加 T，比如对于 Reader，我们有 ReaderT，RWS，也有对应的 RWST。其中 T 代表 Transform。
 
 
-<a id="org9a5ea0a"></a>
+<a id="org94790a4"></a>
 
 ### ReaderT
 
+让我来通过简单的ReaderT来解释到底什么是T吧, 首先跟 Reader 一样我们有个 runReaderT
 
-<a id="org615ee41"></a>
+```haskell
+newtype ReaderT e m a = ReaderT { runReaderT :: e -> m a }
+```
 
-## MonadPlus
+比较一下 Reader 的定义
+
+```haskell
+newtype Reader e a = Reader { runReader :: (e -> a) }
+```
+
+有没有发现多了一个 m, 也就是说, `runReader e` 会返回 a, 但是 `runReaderT e` 则会返回 `m a`
+
+```haskell
+instance (Monad m) => Monad (ReaderT e m) where
+    return   = lift . return
+    r >>= k  = ReaderT $ \ e -> do
+        a <- runReaderT r e
+        runReaderT (k a) e
+```
+
+再看看 monad 的实现, 也是一样的, 先 run 一下 `r e` 得到结果 `a`, 应用函数 `k` 到 `a`, 再 run 一把.
+
+问题是, 这里的 `return` 里面的 `lift` 是哪来的?
+
+```haskell
+instance MonadTrans (ReaderT e) where
+  lift m = ReaderT (const m)
+```
+
+这个函数 `lift` 被定义在 MonadTrans 的实例中, 简单的把 m 放到 ReaderT 结果中.
+
+例如, `lift (Just 1)` 会得到 ReaderT, 其中 e 随意, m 为 Maybe Num
+
+重点需要体会的是, Reader 可以越过 Maybe 直接操作到 Num, 完了再包回来.
 
 
-<a id="org54b6066"></a>
+<a id="org8826b86"></a>
 
-## MonadFix
-
-
-<a id="org1039518"></a>
-
-## ST
+## TODO MonadPlus
 
 
-<a id="org7026f09"></a>
+<a id="org6472aa0"></a>
 
-## Free Monad
-
-
-<a id="org3fd7f92"></a>
-
-## Eff
+## TODO MonadFix
 
 
-<a id="org6625c83"></a>
+<a id="orgb1b3177"></a>
+
+## TODO ST
+
+
+<a id="org5c0ea03"></a>
+
+## TODO Free Monad
+
+
+<a id="org8845973"></a>
+
+## TODO Eff
+
+
+<a id="org0809916"></a>
 
 # References
 
