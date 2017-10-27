@@ -1,7 +1,7 @@
 #+TITLE: 范畴论完全装逼手册 / Grokking Monad
 #+Date: <2017-02-10 Fri>
 #+AUTHOR: 欧阳继超
-#+OPTIONS: ^:t
+#+OPTIONS: ^:t todo:nil
 #+MACRO: ruby @@html:<ruby>$1<rt>$2</rt></ruby>@@
 #+EXPORT_FILE_NAME: ../book/index.md
 
