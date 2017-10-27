@@ -31,15 +31,18 @@ RWS 是缩写 Reader Writer State monad, 所以明显是三个monad的合体。�
     let res = a + e
     put res
     tell [res]
+    return res
   runRWS readWriteState 1 2
+  -- (3 3 [3])
 #+END_SRC
 
 注意到跟 Reader 和 State 一样，run的时候输入初始值
 
 其中 1 为 Reader 的值，2 为 State 的
 
-** IN PROGRESS Monad Transform
+** DONE Monad Transform
 :LOGBOOK:
+- State "DONE"       from "IN PROGRESS" [2017-10-26 Thu 21:44]
 - State "IN PROGRESS" from "TODO"       [2017-06-09 Fri 21:33]
 :END:
 你会发现 RWS一起用挺好的，能读能写能打 log，但是已经固定好搭配了，只能是 RWS ，如果我还想加入其它的 Monad，该怎么办呢？
@@ -98,9 +101,48 @@ ReaderT { runReaderT :: r -> Identity a }
 ReaderT { runReaderT :: r -> a }
 #+END_SRC
 
-** TODO MonadPlus
+** Alternative
+#+BEGIN_SRC haskell
+class Applicative f => Alternative f where
+    empty :: f a
+    (<|>) :: f a -> f a -> f a
+#+END_SRC
 
-** TODO MonadFix
-** TODO ST
+其实就是 Applicative 的 =或=
+
+比如:
+#+BEGIN_SRC haskell
+Just 1 <|> Just 2 -- Just 1
+Just 1 <|> Nothing -- Just 1
+Nothing <|> Just 1 -- Just 1
+Nothing <|> Nothing -- Nothing
+#+END_SRC
+
+** MonadPlus
+这跟 Alternative 是一毛一样的, 只是限制的更细, 必须是 Monad才行
+
+#+BEGIN_SRC haskell
+class (Alternative m, Monad m) => MonadPlus m where
+   mzero :: m a
+   mzero = empty
+   mplus :: m a -> m a -> m a
+   mplus = (<|>)
+#+END_SRC
+
+看, 实现中直接就调用了 Alternative 的 =empty= 和 =<|>=
+
+** TODO ST Monad
+ST Monad 跟 State Monad 的功能有些像, 不过更厉害的是, 他不是 immutable 的, 而是 "immutable" 的在原地做修改. 改完之后 runST 又然他回到了 immutable 的 Haskell 世界.
+
+#+BEGIN_SRC haskell
+  sumST :: Num a => [a] -> a
+  sumST xs = runST $ do           -- do 后面的事情会是不错的内存操作, runST 可以把它拉会纯的世界
+      n <- newSTRef 0             -- 在内存中创建一块并指到 STRef
+      forM_ xs $ \x -> do         -- 这跟命令式的for循环改写变量是一毛一样的
+          modifySTRef n (+x)
+      readSTRef n                 -- 返回改完之后的 n 的值
+#+END_SRC
+
 ** TODO Free Monad
+
 ** TODO Eff
