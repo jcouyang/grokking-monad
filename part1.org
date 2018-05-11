@@ -61,6 +61,7 @@
 [[file:images/category.svg]]
 
 这些玩意对应到 haskell 的 typeclass 大致就是这样
+
 #+BEGIN_SRC haskell
 class Category (c :: * -> * -> *) where
   id :: c a a
@@ -585,12 +586,12 @@ fmap f :: T b -> T^2 c
 mu :: T^2 c -> T c
 #+END_SRC
 
-紫色的箭头连起来（compose）就是 T f'，所以, 
+紫色的箭头连起来（compose）就是 T f'，所以,
 #+BEGIN_SRC haskell
 tb >>= f = mu . fmap f tb
 #+END_SRC
 
-大火箭则是蓝色箭头的组合 
+大火箭则是蓝色箭头的组合
 #+BEGIN_SRC haskel
 (f <=< g) = mu . T f . g = mu . fmap f . g
 #+END_SRC
