@@ -4,7 +4,14 @@
 #+OPTIONS: ^:t
 #+MACRO: ruby @@html:<ruby>$1<rt>$2</rt></ruby>@@
 
+- [[./index.org][第一部分：范畴论]]
+- *[[./part2.org][第二部分：食用猫呢]]* 👈
+- [[./part3.org][第三部分：搞基猫呢]]
+第一部分理论部分都讲完了， 如果你读到这里还没有被这些吊炸天的概念搞daze，接下来可以看看它到底跟我们编程有鸟关系呢？
 
+第二部分将介绍由这些概念产生的一些实用的monad instances，这些 monad 都通过同样的抽象方式，解决了分离计算与副作用的工作。
+
+最后一部分，我们还可以像 IO monad 一样，通过 free 或者 Eff 自定义自己的计算，和可能带副作用的解释器。
 * COMMENT
 #+BEGIN_SRC emacs-lisp
 (require 'ob-haskell)
@@ -485,3 +492,7 @@ instance Monad (Cont r) where
 第二部分食用部分也讲完了， 不知是否以及大致了解了monad的尿性各种基本玩法呢？通过这些常用的基本的 monad instance，解决命令式编程中的一些简单问题应该是够了。
 
 不过，接下来还有更变态的猫，就先叫她 +搞基+ 猫呢好了。
+
+- 👉 [[./part3.org][第三部分：{{{ruby(搞基猫呢, Advanced Monads)}}}]]
+
+当然我又还没空全部写完，如果还有很多人{{{ruby(预定,只要998)}}} Gumroad 上的 @@html: <script src="https://gumroad.com/js/gumroad.js"></script><a class="gumroad-button" href="https://gum.co/grokking-monad" target="_blank">Grokking Monad</a>@@ 电子书的话，我可能会稍微写得快一些。毕竟，写了也没人感兴趣也怪浪费时间的。不过，我猜也没几个人能看到这一行，就当是我又自言自语吧，怎么又突然觉得自己好分裂，诶~，为什么我要说又？

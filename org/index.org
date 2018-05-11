@@ -10,10 +10,13 @@ FBI Warning
 #+HTML: 本文所有文字与图片遵循 <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/">CC 署名-非商业性使用-禁止演绎 3.0 许可协议</a><br/><a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/3.0/88x31.png" /></a>
 #+END_CENTER
 
- 👇PDF，kindle， epub格式的书现已开始接收预定...
+ 👇PDF，kindle， epub格式的书现已开放购买...
+
+购买链接是 gumroad，需要科学上网才能点开，如果你不能科学上网，就不要买了（当然也没法买），把这六块钱投资到科学上网上吧。
 
 #+HTML: <script src="https://gumroad.com/js/gumroad-embed.js"></script><div class="gumroad-product-embed" data-gumroad-product-id="grokking-monad"><a href="https://gumroad.com/l/grokking-monad"><img src="https://blog.oyanglul.us/grokking-monad/cover.jpg"></img></a></div>
 
+ 👇免费在线阅读
 
 #+INCLUDE: "./part1.org"
 #+INCLUDE: "./part2.org"
