@@ -3,7 +3,7 @@
 #+AUTHOR: 欧阳继超
 #+OPTIONS: ^:t
 #+MACRO: ruby @@html:<ruby>$1<rt>$2</rt></ruby>@@
-
+#+PROPERTY: header-args :eval never-export
 
 - *[[./part1.org][第一部分：猫论]]* 👈
 - [[./part2.org][第二部分：食用猫呢]]
