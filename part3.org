@@ -154,11 +154,11 @@ ST Monad 跟 State Monad 的功能有些像, 不过更厉害的是, 他不是 im
 data Free f a = Roll (f (Free f a)) | Return a
 #+END_SRC
 
-其中 `f` 就是你业务需要的 effect 类型，`a` 是这个 effect 所产生的返回值类型。
+其中 =f= 就是你业务需要的 effect 类型，=a= 是这个 effect 所产生的返回值类型。
 
-右边两种构造函数，如果把 `Role` 改成 `Cons`, `Return` 改成 `Nil` 的话, 是不是跟 List 其实是 ruby{{{同构,一样}}} 的呢? 所以如果想象成 List, 那么 `f` 在这里就相当于 List 中的一个元素.
+右边两种构造函数，如果把 =Role= 改成 =Cons=, =Return= 改成 =Nil= 的话, 是不是跟 List 其实是 {{{ruby(同构,isomophic)}}} 的呢? 所以如果想象成 List, 那么 =f= 在这里就相当于 List 中的一个元素.
 
-到那时, `>>=` 的操作又跟 List 略有不同, 我们都知道 `>>=` 会把每一个元素 map 成 List, 然后 flatten, 但 Free 其实是用来构建
+到那时, ~>>=~ 的操作又跟 List 略有不同, 我们都知道 ~>>=~ 会把每一个元素 map 成 List, 然后 flatten, 但 Free 其实是用来构建
 顺序的 effect 的, 所以:
 
 #+BEGIN_SRC haskell
@@ -168,7 +168,7 @@ instance Functor f => Monad (Free f) where
   Roll ffa >>= fn = Roll $ fmap (>>= fn) ffa
 #+END_SRC
 
-你会发现 `>>=` 会递归的 fmap 到 Roll 上, 直到最后一个 `Return`.
+你会发现 ~>>=~ 会递归的 =fmap= 到 =Roll= 上, 直到最后一个 =Return=.
 
 如果你有一个
 #+BEGIN_SRC haskell
@@ -176,7 +176,7 @@ data Eff = Eff1 | Eff2 | Eff3
 program = Roll Eff1 (Roll Eff2 (Return Int)
 #+END_SRC
 
-`>>=` 一个函数 `Int => Free Eff3 Int` 到 program 会是什么?
+~>>=~ 一个函数 =Int => Free Eff3 Int= 到 =program= 会是什么?
 
 #+BEGIN_SRC haskell
 Roll Eff1 (Roll Eff2 (Roll Eff3 (Return Int))
@@ -184,7 +184,37 @@ Roll Eff1 (Roll Eff2 (Roll Eff3 (Return Int))
 
 真的这么神奇吗?
 
-细心的你可能早都发现了 `Eff` 这货必须是个 `Functor` 才行. 那我们如何随便定义一个 `data Eff` 直接能生成 `Functor Eff` 的实例呢?
+细心的你可能早都发现了 =Eff= 这货必须是个 =Functor= 才行. 那我们如何随便定义一个 =data Eff= 直接能生成 =Functor Eff= 的实例呢?
+
+*** Coyoneda
+希望你还依然记得第一部分的米田 +共+ 引理
+#+BEGIN_SRC haskell
+data CoYoneda f a = forall b. CoYoneda (b -> a) (f b)
+#+END_SRC
+
+事实上很简单可以把任何 =f= 变成 =CoYoneda f=
+
+#+BEGIN_SRC haskell
+phi :: f a -> CoYoneda f a
+phi fa = CoYoneda id fa
+#+END_SRC
+
+诀窍就是 =id=, 也就是你把 =b= 变成 =a=, 再把 =fa= 放到 =CoYoneda= 里就好了
+
+当 =f= 是 =Functor= 时, 又可以把 =CoYoneda= 变成 =f=
+
+#+BEGIN_SRC haskell
+psi :: Functor f => CoYoneda f a -> f a
+psi (CoYoneda g fa) = fmap g fa
+#+END_SRC
+
+反过来的这个不重要, 重要的是 =phi=, 因为如果你可以把任何 =f= 变成 =CoYoneda f=, 而 =CoYoneda f= 又是 =Functor=,
+我们不就免费得到一个 =Functor=?
+
+#+BEGIN_SRC haskell
+instance Functor (Coyoneda f) where
+  fmap f (Coyoneda g fb) = Coyoneda (f . g) fb
+#+END_SRC
 
 
 ** TODO Eff
