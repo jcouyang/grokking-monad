@@ -148,13 +148,14 @@ ST Monad 跟 State Monad 的功能有些像, 不过更厉害的是, 他不是 im
 
 那就是 Free, Free 可以将任意 datatype lift 成为 Monad
 
+*** Free
 先看 Free 什么定义:
 
 #+BEGIN_SRC haskell
 data Free f a = Roll (f (Free f a)) | Return a
 #+END_SRC
 
-其中 =f= 就是你业务需要的 effect 类型，=a= 是这个 effect 所产生的返回值类型。
+其中 =f= 就是你业务需要的 effect 类型, =a= 是这个 effect 所产生的返回值类型。
 
 右边两种构造函数，如果把 =Role= 改成 =Cons=, =Return= 改成 =Nil= 的话, 是不是跟 List 其实是 {{{ruby(同构,isomophic)}}} 的呢? 所以如果想象成 List, 那么 =f= 在这里就相当于 List 中的一个元素.
 
@@ -172,8 +173,8 @@ instance Functor f => Monad (Free f) where
 
 如果你有一个
 #+BEGIN_SRC haskell
-data Eff = Eff1 | Eff2 | Eff3
-program = Roll Eff1 (Roll Eff2 (Return Int)
+data Eff a = Eff1 a | Eff2 a | Eff3 a
+program = Roll Eff1 (Roll Eff2 (Return Int))
 #+END_SRC
 
 ~>>=~ 一个函数 =Int => Free Eff3 Int= 到 =program= 会是什么?
@@ -216,5 +217,23 @@ instance Functor (Coyoneda f) where
   fmap f (Coyoneda g fb) = Coyoneda (f . g) fb
 #+END_SRC
 
+*** Free Functor
+比如我们的 =Eff= 就可以直接通过 =phi= 变成 =CoYoneda Eff=, 从而得到免费的 Functor
+
+#+BEGIN_SRC haskell
+data Eff a = Eff1 a | Eff2 a | Eff3 a
+program = Roll (phi (Eff1 (Roll (phi (Eff2 (Return Int))))))
+#+END_SRC
+
+
+*** Interpreter
+构造完一个 free program 后,我们得到的是一个嵌套的数据结构, 当我们需要 run 这个 program 时, 我们需要 foldMap 一个
+Interpreter 去一层层拨开 这个 free program.
+
+#+BEGIN_SRC haskell
+foldMap :: Monad m => (forall x . f x -> m x) -> Free f a -> m a
+foldMap _ (Return a)  = return a
+foldMap f (Roll a) = f a >>= foldMap f
+#+END_SRC
 
 ** TODO Eff
