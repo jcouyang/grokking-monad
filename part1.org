@@ -289,7 +289,7 @@ String Diagram 的概念很简单，就是点变线线变点。
 当有了自然变换之后，没法表示了呀，那原来的点和线都升一维度，变成线和面，这样，就腾出一个点来表示自然变换了。
 
 #+CAPTION: String Diagram：自然变换是点，Functor是线，范畴是面
-https://www.evernote.com/l/ABecC0oxzthLE5w382ydpghjjHjpw2UFqkgB/image.png
+[[file:images/p1-string-diagram.png]]
 
 compose的方向是从右往左，从下到上。
 
@@ -299,7 +299,7 @@ compose的方向是从右往左，从下到上。
 
 让我们来看看什么叫有来回。
 
-https://www.evernote.com/l/ABcAAZt8nvxH4bq0EXQ-Jm5eNEKpCtrQe70B/image.png
+[[file:images/p1-adjunction-functor.png]]
 
 其中：
 
@@ -321,12 +321,12 @@ f':: b -> a
 伴随函子的 FG 组合是 C 范畴的 id 函子 F . G = 1_c
 
 #+CAPTION: 伴随函子的两个Functor组合, 左侧为 F \eta, 右侧为 \epsilon F
-https://www.evernote.com/l/ABdvTPL9liFBrbtLJampYbYWvWmxxe50ossB/image.png
+[[file:images/p1-ajunction-functor-compose.png]]
 
 Functor 不仅横着可以组合，竖着(自然变换维度)也是可以组合的，因为自然变换是 Functor 范畴的箭头。
 
 #+CAPTION: F \eta . \epsilon F  = F
-https://www.evernote.com/l/ABcPa4yf4XpENptngB9xFoJRfHffZ8GPtIoB/image.png
+[[file:images/p1-ajunction-functor-compose-nat.png]]
 
 当到组合 F \eta . \epsilon F 得到一个弯弯曲曲的 F 时，我们可以拽着F的两段一拉，就得到了直的 F。
 
@@ -339,7 +339,7 @@ String Diagram 神奇的地方是所有线都可以拉上下两端，这个技�
 - 有一个从 i_c 到 T 的自然变化 \eta (eta)
 - 有一个从 T^2 到 T 的自然变化 \mu (mu)
 
-https://www.evernote.com/l/ABexO3KphElMrZ_5scYTDxjOelA5cigrHCoB/image.png
+[[file:images/p1-monad-properties.png]]
 
 #+BEGIN_SRC haskell
 class Endofunctor c t => Monad c t where
@@ -356,11 +356,11 @@ class Endofunctor m => Monad m where
 
 要推出单子的 \eta 变换，只需要让 FG = T
 #+CAPTION: 伴随函子的 \epsilon 就是单子的 \eta
-https://www.evernote.com/l/ABfg4vXk8DJGRZGPRv6A_ifmOykudKxqyqUB/image.png
+[[file:images/p1-ajunction-functor-to-monad-eta.png]]
 
 同样的，当 FG = T, F \eta G 就可以变成 \mu
 #+CAPTION: 伴随函子的 F \eta G 是函子的 \mu
-https://www.evernote.com/l/ABf_3PObVKVLI4xOK9ijFcnC0hZ29TJIZVsB/image.png
+[[file:images/p1-ajunction-functor-to-monad-mu.png]]
 
 *** 三角等式
 
@@ -368,10 +368,9 @@ https://www.evernote.com/l/ABf_3PObVKVLI4xOK9ijFcnC0hZ29TJIZVsB/image.png
 
 要推出三角等式只需要组合 F \eta G 和 \epsilon F G
 #+CAPTION: F \eta G  . \epsilon F G = F G
-https://www.evernote.com/l/ABemC0HnOQ1PIpiI6Y-34nEm4CSoITFuB64B/image.png
-
+[[file:images/p1-adjunction-functor-triangle.png]]
 #+CAPTION: F \eta G  . \epsilon F G= F G 对应到Monad就是 \mu . \eta T = T
-https://www.evernote.com/l/ABePUH_43tVLgJJ8y4QNKhr10UnxWlWnpI0B/image.png
+[[file:images/p1-monad-triangle.png]]
 
 换到代码上来说
 #+BEGIN_SRC haskell
@@ -382,11 +381,9 @@ https://www.evernote.com/l/ABePUH_43tVLgJJ8y4QNKhr10UnxWlWnpI0B/image.png
 同样的，左右翻转也成立
 
 #+CAPTION: F \eta G . F G \epsilon = F G
-https://www.evernote.com/l/ABfdt-llk4dKvY94Pqn5fZFlRt5B9qwii6UB/image.png
-
+[[file:images/p1-adjunction-functor-triangle-reverse.png]]
 #+CAPTION: F \eta G . F G \epsilon = F G 对应到 Monad是 \mu . T \eta = T
-https://www.evernote.com/l/ABcG2YoCCNdHd7pdFViyMBMli12foiuBIsAB/image.png
-
+[[file:images/p1-monad-triangle-reverse.png]]
 T \eta 就是 fmap eta
 #+BEGIN_SRC haskell
     (mu . fmap eta) m = m
@@ -403,21 +400,20 @@ m >>= eta = m
 单子另一大定律是结合律，让我们从伴随函子推起
 
 假设我们现在有函子 F \eta G 和 函子 F \eta G F G, compose 起来会变成  F \eta G . F \eta G F G
-https://www.evernote.com/l/ABfsS4KBjE1Gbrd8AouQJeBVc9u_sqBUzPwB/image.png
+[[file:images/p1-ajunction-functor-monad-laws-1.png]]
 
 用 F G = T ， F \eta G = \mu 代换那么就得到了单子的 \mu . \mu T
-https://www.evernote.com/l/ABc_scvfquxHhKZZ6I51i1hL3f5Oe382IZ0B/image.png
+[[file:images/p1-ajunction-functor-monad-laws-2.png]]
 
 当组合 F \eta G 和 F G F \mu G 后，会得到一个镜像的图
-https://www.evernote.com/l/ABcsGipPc8BFL7Yp9NuCfUQQ3W0JntC7JDcB/image.png
+[[file:images/p1-ajunction-functor-monad-laws-3.png]]
 
 对应到单子的 \mu . T \mu
-https://www.evernote.com/l/ABdRAkfmbjJMHZNeSNxzc_r2bgeq2MNKrC8B/image.png
 
 结合律是说 \mu . \mu T = \mu . T \mu , 即图左右翻转结果是相等的，为什么呢？看单子的String Diagram 不太好看出来，我们来看伴随函子
 
 如果把左图的左边的 \mu 往上挪一点，右边的 \mu 往下挪一点，是不是跟右图就一样了
-https://www.evernote.com/l/ABcv0axE5alKiZupUL2SyhrALuS-4DyBfQAB/image.png
+[[file:images/p1-ajunction-functor-monad-laws-4.png]]
 
 结合律反映到代码中就是
 #+BEGIN_SRC haskell
