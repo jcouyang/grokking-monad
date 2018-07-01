@@ -1,4 +1,4 @@
-#+TITLE: 范畴论完全装逼手册(三) / Grokking Monad
+#+TITLE: 范畴论完全装逼手册 / Grokking Monad
 #+Date: <2017-02-10 Fri>
 #+AUTHOR: 欧阳继超
 #+OPTIONS: ^:t

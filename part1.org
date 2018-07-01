@@ -1,4 +1,4 @@
-#+TITLE: 范畴论完全装逼手册(一) / Grokking Monad
+#+TITLE: 范畴论完全装逼手册 / Grokking Monad
 #+Date: <2017-02-10 Fri>
 #+AUTHOR: 欧阳继超
 #+OPTIONS: ^:t
@@ -8,6 +8,15 @@
 - *[[./part1.org][第一部分：猫论]]* 👈
 - [[./part2.org][第二部分：食用猫呢]]
 - [[./part3.org][第三部分：搞基猫呢]]
+* COMMENT
+#+BEGIN_SRC emacs-lisp
+(require 'ob-dot)
+#+END_SRC
+
+#+RESULTS:
+: ob-dot
+
+* 第一部分：{{{ruby(范畴论,Catergory Theory)}}}
 
 很多人都不明白什么是Monad，并不是因为不会用，不知觉可能就在用某种 monad。\\
 定义和使用起来其实不难，困惑的大多应该是后面的这堆理论-- 范畴论。当然，我也没学过范畴论，只是略微看得懂写Haskell罢了。
@@ -20,15 +29,6 @@
 
 这里面很多很装逼的单词，它们都是 /斜体/ ，就算没看懂，把这些词记住也足够{{{ruby(装一阵子逼了,买一阵子萌了)}}}。
 
-* COMMENT
-#+BEGIN_SRC emacs-lisp
-(require 'ob-dot)
-#+END_SRC
-
-#+RESULTS:
-: ob-dot
-
-* 第一部分：{{{ruby(范畴论,Catergory Theory)}}}
 ** /Category/
 #+INDEX: Catergory
 #+INDEX: 范畴

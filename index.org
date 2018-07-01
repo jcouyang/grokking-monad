@@ -1,9 +1,9 @@
 #+TITLE: 范畴论完全装逼手册 / Grokking Monad
 #+Date: <2017-02-10 Fri>
 #+AUTHOR: 欧阳继超
-#+OPTIONS: ^:t todo:nil
+#+OPTIONS: ^:t todo:nil toc:t num: 3
 #+MACRO: ruby @@html:<ruby>$1<rt>$2</rt></ruby>@@
-#+EXPORT_FILE_NAME: ../book/index.md
+#+EXPORT_FILE_NAME: ebook.org
 
 #+BEGIN_CENTER
 FBI Warning
@@ -16,11 +16,10 @@ FBI Warning
 
 #+HTML: <script src="https://gumroad.com/js/gumroad-embed.js"></script><div class="gumroad-product-embed" data-gumroad-product-id="grokking-monad"><a href="https://gumroad.com/l/grokking-monad"><img src="https://blog.oyanglul.us/grokking-monad/cover.jpg"></img></a></div>
 
- 👇免费在线阅读
 
-#+INCLUDE: "./part1.org"
-#+INCLUDE: "./part2.org"
-#+INCLUDE: "./part3.org"
+#+INCLUDE: "./part1.org" :lines "19-"
+#+INCLUDE: "./part2.org" :lines "19-"
+#+INCLUDE: "./part3.org" :lines "15-"
 
 * References
 - http://dev.stephendiehl.com/hask

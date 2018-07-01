@@ -1,4 +1,4 @@
-#+TITLE: 范畴论完全装逼手册(二) / Grokking Monad
+#+TITLE: 范畴论完全装逼手册 / Grokking Monad
 #+Date: <2017-02-10 Fri>
 #+AUTHOR: 欧阳继超
 #+OPTIONS: ^:t
@@ -7,11 +7,7 @@
 - [[./index.org][第一部分：范畴论]]
 - *[[./part2.org][第二部分：食用猫呢]]* 👈
 - [[./part3.org][第三部分：搞基猫呢]]
-第一部分理论部分都讲完了， 如果你读到这里还没有被这些吊炸天的概念搞daze，接下来可以看看它到底跟我们编程有鸟关系呢？
 
-第二部分将介绍由这些概念产生的一些实用的monad instances，这些 monad 都通过同样的抽象方式，解决了分离计算与副作用的工作。
-
-最后一部分，我们还可以像 IO monad 一样，通过 free 或者 Eff 自定义自己的计算，和可能带副作用的解释器。
 * COMMENT
 #+BEGIN_SRC emacs-lisp
 (require 'ob-haskell)
