@@ -4,7 +4,7 @@
 #+OPTIONS: ^:t
 #+MACRO: ruby @@html:<ruby>$1<rt>$2</rt></ruby>@@
 
-- [[./index.org][第一部分：范畴论]]
+- [[./part1.org][第一部分：范畴论]]
 - *[[./part2.org][第二部分：食用猫呢]]* 👈
 - [[./part3.org][第三部分：搞基猫呢]]
 

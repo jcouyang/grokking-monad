@@ -1,9 +1,15 @@
 #+TITLE: 范畴论完全装逼手册 / Grokking Monad
 #+Date: <2017-02-10 Fri>
 #+AUTHOR: 欧阳继超
+#+LATEX_CLASS: book
+#+LATEX_CLASS_OPTIONS: [a5paper]
+#+LATEX_HEADER: \usepackage[unicode,dvipdfm]{hyperref}
+#+LATEX_HEADER: \usepackage{fontspec}
+#+LATEX_HEADER: \usepackage{xeCJK}
+#+LATEX_HEADER: \setCJKmainfont{STXihei}
+
 #+OPTIONS: ^:t todo:nil toc:t num:3
 #+MACRO: ruby @@html:<ruby>$1<rt>$2</rt></ruby>@@
-#+EXPORT_FILE_NAME: ebook.org
 
 #+BEGIN_CENTER
 FBI Warning
@@ -17,8 +23,8 @@ FBI Warning
 #+HTML: <script src="https://gumroad.com/js/gumroad-embed.js"></script><div class="gumroad-product-embed" data-gumroad-product-id="grokking-monad"><a href="https://gumroad.com/l/grokking-monad"><img src="https://blog.oyanglul.us/grokking-monad/cover.jpg"></img></a></div>
 
 
-#+INCLUDE: "./part1.org" :lines "19-"
-#+INCLUDE: "./part2.org" :lines "19-"
+#+INCLUDE: "./part1.org" :lines "19-603"
+#+INCLUDE: "./part2.org" :lines "19-490"
 #+INCLUDE: "./part3.org" :lines "15-"
 
 * References
