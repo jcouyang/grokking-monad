@@ -483,6 +483,11 @@ instance Monad (Cont r) where
     m >>= k  = Cont $ \c -> runCont m $ \a -> runCont (k a) c
 #+END_SRC
 
+=($ a)= 比较有意思, 我们都知道 =f $ g a= 其实就是 =f(g a)=, 所以 =$= 其实就是一个 apply 左边的函数到右边表达式的中缀函数, 如果写成前缀则是
+=($ (g a) f)=. 是反的是因为 =$= 是有结合, 需要右边表达式先求值, 所以只给一个 a 就相当于 =($ a) = \f -> f a=
+
+回到 Monad Cont...
+
 ** Summary
 第二部分食用部分也讲完了， 不知是否以及大致了解了monad的尿性各种基本玩法呢？通过这些常用的基本的 monad instance，解决命令式编程中的一些简单问题应该是够了。
 
