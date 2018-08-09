@@ -479,8 +479,8 @@ add a b = return (a + b)
 
 #+BEGIN_SRC haskell
 instance Monad (Cont r) where
-    return a       = Cont $ \k -> k a
-    (Cont c) >>= f = Cont $ \k -> c (\a -> runCont (f a) k)
+    return a = Cont ($ a)
+    m >>= k  = Cont $ \c -> runCont m $ \a -> runCont (k a) c
 #+END_SRC
 
 ** Summary
