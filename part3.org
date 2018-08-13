@@ -64,6 +64,8 @@ newtype Reader e a = Reader { runReader :: (e -> a) }
 
 有没有发现多了一个 m, 也就是说, =runReader e= 会返回 a, 但是 =runReaderT e= 则会返回 =m a=
 
+[[file:images/p3-ReaderT.png]]
+
 #+BEGIN_SRC haskell
 instance (Monad m) => Monad (ReaderT e m) where
     return   = lift . return
@@ -74,12 +76,15 @@ instance (Monad m) => Monad (ReaderT e m) where
 
 再看看 monad 的实现, 也是一样的, 先 run 一下 =r e= 得到结果 =a=, 应用函数 =k= 到 =a=, 再 run 一把.
 
+
 问题是, 这里的 =return= 里面的 =lift= 是哪来的?
 
 #+BEGIN_SRC haskell
   instance MonadTrans (ReaderT e) where
     lift m = ReaderT (const m)
 #+END_SRC
+
+[[file:images/p3-MonadTrans-ReaderT-e-m.png]]
 
 这个函数 =lift= 被定义在 MonadTrans 的实例中, 简单的把 m 放到 ReaderT 结果中.
 
@@ -107,6 +112,8 @@ class Applicative f => Alternative f where
     empty :: f a
     (<|>) :: f a -> f a -> f a
 #+END_SRC
+
+[[file:images/p3-Alternative.png]]
 
 其实就是 Applicative 的 =或=
 
@@ -193,12 +200,16 @@ Roll Eff1 (Roll Eff2 (Roll Eff3 (Return Int))
 data CoYoneda f a = forall b. CoYoneda (b -> a) (f b)
 #+END_SRC
 
+[[file:images/p3-CoYoneda.png]]
+
 事实上很简单可以把任何 =f= 变成 =CoYoneda f=
 
 #+BEGIN_SRC haskell
 phi :: f a -> CoYoneda f a
 phi fa = CoYoneda id fa
 #+END_SRC
+
+[[file:images/p3-CoYoneda-phi.png]]
 
 诀窍就是 =id=, 也就是你把 =b= 变成 =a=, 再把 =fa= 放到 =CoYoneda= 里就好了
 
@@ -208,6 +219,8 @@ phi fa = CoYoneda id fa
 psi :: Functor f => CoYoneda f a -> f a
 psi (CoYoneda g fa) = fmap g fa
 #+END_SRC
+
+[[file:images/p3-CoYoneda-psi.png]]
 
 反过来的这个不重要, 重要的是 =phi=, 因为如果你可以把任何 =f= 变成 =CoYoneda f=, 而 =CoYoneda f= 又是 =Functor=,
 我们不就免费得到一个 =Functor=?
@@ -225,6 +238,7 @@ data Eff a = Eff1 a | Eff2 a | Eff3 a
 program = Roll (phi (Eff1 (Roll (phi (Eff2 (Return Int))))))
 #+END_SRC
 
+[[file:images/p3-Free.png]]
 
 *** Interpreter
 构造完一个 free program 后,我们得到的是一个嵌套的数据结构, 当我们需要 run 这个 program 时, 我们需要 foldMap 一个
