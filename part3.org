@@ -1,8 +1,12 @@
 #+TITLE: 范畴论完全装逼手册 / Grokking Monad
-#+Date: <2017-02-10 Fri>
+#+Date: <2018-07-28 Fri>
 #+AUTHOR: 欧阳继超
 #+OPTIONS: ^:t
 #+MACRO: ruby @@html:<ruby>$1<rt>$2</rt></ruby>@@
+
+- [[./part1.org][第一部分：猫论]]
+- [[./part2.org][第二部分：食用猫呢]]
+- *[[./part3.org][第三部分：搞基猫呢*]] 👈
 
 * COMMENT
 #+BEGIN_SRC emacs-lisp
@@ -138,7 +142,7 @@ class (Alternative m, Monad m) => MonadPlus m where
 
 看, 实现中直接就调用了 Alternative 的 =empty= 和 =<|>=
 
-** TODO ST Monad
+** ST Monad
 ST Monad 跟 State Monad 的功能有些像, 不过更厉害的是, 他不是 immutable 的, 而是 "immutable" 的在原地做修改. 改完之后 runST 又然他回到了 immutable 的 Haskell 世界.
 
 #+BEGIN_SRC haskell
@@ -150,7 +154,7 @@ ST Monad 跟 State Monad 的功能有些像, 不过更厉害的是, 他不是 im
       readSTRef n                 -- 返回改完之后的 n 的值
 #+END_SRC
 
-** TODO Free Monad
+** Free Monad
 上一章说过的 RWS Monad 毕竟是固定搭配，当你的业务需要更多的 Monad 来表示 Effect 时，我们就需要有那么个小猪手帮我们定义自己的 Monad。
 
 那就是 Free, Free 可以将任意 datatype lift 成为 Monad
