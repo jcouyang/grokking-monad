@@ -17,3 +17,9 @@ curl https://raw.githubusercontent.com/jcouyang/scala-dojo/master/src/test/scala
 #+END_SRC
 
 #+RESULTS:
+
+#+BEGIN_SRC shell :results value raw :exports results :eval yes
+curl https://raw.githubusercontent.com/jcouyang/scala-dojo/master/src/test/scala/4-2-free.org
+#+END_SRC
+
+#+RESULTS:
