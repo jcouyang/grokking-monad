@@ -184,21 +184,89 @@ instance Functor f => Monad (Free f) where
 
 你会发现 ~>>=~ 会递归的 =fmap= 到 =Roll= 上, 直到最后一个 =Return=.
 
-如果你有一个
+比如, 如果你有一个 program 有三种副作用 Eff1, Eff2, Eff3
+
 #+BEGIN_SRC haskell
 data Eff a = Eff1 a | Eff2 a | Eff3 a
-program = Roll Eff1 (Roll Eff2 (Return Int))
+program = do
+ a <- liftF $ Eff1 1
+ b <- liftF $ Eff2 2
+ c <- liftF $ Eff3 3
+ return a + b + c
 #+END_SRC
 
-~>>=~ 一个函数 =Int => Free Eff3 Int= 到 =program= 会是什么?
+如果我们把 program 展开, 每一步 ~>>=~ 大概是这样:
 
 #+BEGIN_SRC haskell
-Roll Eff1 (Roll Eff2 (Roll Eff3 (Return Int))
+  liftF $ Eff1 1
 #+END_SRC
 
-真的这么神奇吗?
+展开既是:
 
-细心的你可能早都发现了 =Eff= 这货必须是个 =Functor= 才行. 那我们如何随便定义一个 =data Eff= 直接能生成 =Functor Eff= 的实例呢?
+#+BEGIN_SRC haskell
+Roll (Eff1 (Return 1))
+#+END_SRC
+
+代入到 program 即:
+#+BEGIN_SRC haskell
+  program = Roll (Eff1 (Return 1)) >>= \a -> do
+     b <- liftF $ Eff2 2
+     c <- liftF $ Eff3 3
+     return a + b + c
+#+END_SRC
+
+用 Free 的 ~>>=~ 公式 ~Roll ffa >>= fn = Roll $ fmap (>>= fn) ffa~ 去展开上面就得到:
+
+#+BEGIN_SRC haskell
+  program = Roll $ Eff1 (Return 1 >>= fn1)) where
+    fn1 = \a -> do
+     b <- liftF $ Eff2 2
+     c <- liftF $ Eff3 3
+     return a + b + c
+#+END_SRC
+
+~Return 1 >>= fn1~ 我们都知道怎么展开:
+
+#+BEGIN_SRC haskell
+  program = Roll $ Eff1 (fn1 1) where
+    fn1 = \a -> do
+     b <- liftF $ Eff2 2
+     c <- liftF $ Eff3 3
+     return a + b + c
+#+END_SRC
+
+展开 =fn1=
+
+#+BEGIN_SRC haskell
+  program = Roll $ Eff1 do
+     b <- liftF $ Eff2 2
+     c <- liftF $ Eff3 3
+     return 1 + b + c
+#+END_SRC
+
+
+同样的步骤展开 Eff2
+#+BEGIN_SRC haskell
+  program = Roll $ Eff1 $ Roll $ Eff2 do
+     c <- liftF $ Eff3 3
+     return 1 + 2 + c
+#+END_SRC
+
+和 Eff3
+
+#+BEGIN_SRC haskell
+  program = Roll $ Eff1 $ Roll $ Eff2 $ Roll $ Eff3 do
+     return 1 + 2 + 3
+#+END_SRC
+
+最后的 program 是不是很像 List 的 Cons 和 Nil 呢?
+
+#+BEGIN_SRC haskell
+  program = Roll $ Eff1 $ Roll $ Eff2 $ Roll $ Eff3 $ Return 1 + 2 + 3
+#+END_SRC
+
+
+但是, 细心的你可能早都发现了 =Eff= 这货必须是个 =Functor= 才行. 那我们如何随便定义一个 =data Eff= 直接能生成 =Functor Eff= 的实例呢?
 
 *** Coyoneda
 
@@ -258,4 +326,8 @@ foldMap _ (Return a)  = return a
 foldMap f (Roll a) = f a >>= foldMap f
 #+END_SRC
 
+** TODO Free Monoid
 ** TODO Eff
+
+** TODO Comonad
+
