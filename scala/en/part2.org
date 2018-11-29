@@ -1,6 +1,6 @@
 #+TITLE: Grokking Monad in Scala
 #+LANGUAGE: en
-#+DATE: <2018-11-19 Mon>
+#+DATE: <2018-11-28 Wed>
 #+HTML_HEAD_EXTRA: <meta property="og:title" content="Grokking Monad in Scala" />
 #+HTML_HEAD_EXTRA: <meta property="og:description" content="Monads" />
 #+HTML_HEAD_EXTRA: <meta property="og:type" content="article" />
