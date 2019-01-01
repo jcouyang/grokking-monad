@@ -18,14 +18,18 @@
 
 * 第一部分：{{{ruby(猫论,Catergory Theory)}}}
 
-[[https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/De_Alice%2527s_Abenteuer_im_Wunderland_Carroll_pic_23_edited_1_of_2.png/1920px-De_Alice%2527s_Abenteuer_im_Wunderland_Carroll_pic_23_edited_1_of_2.png][Cheshire Cat]][fn:3]
+https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/De_Alice%27s_Abenteuer_im_Wunderland_Carroll_pic_23_edited_1_of_2.png/1920px-De_Alice%27s_Abenteuer_im_Wunderland_Carroll_pic_23_edited_1_of_2.png [fn:3]
 
 #+BEGIN_QUOTE
 `But I don’t want to go among mad people,’ Alice remarked.
+
 `Oh, you can’t help that,’ said the Cat: `we’re all mad here. I’m mad. You’re mad.’
+
 `How do you know I’m mad?’ said Alice.
 `You must be,’ said the Cat, `or you wouldn’t have come here.’
+
 Alice didn’t think that proved it at all; however, she went on `And how do you know that you’re mad?’
+
 -- Alice's Adventures in Wonderland
 #+END_QUOTE
 
