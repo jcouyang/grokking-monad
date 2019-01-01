@@ -16,16 +16,27 @@
 #+RESULTS:
 : ob-dot
 
-* 第一部分：{{{ruby(范畴论,Catergory Theory)}}}
+* 第一部分：{{{ruby(猫论,Catergory Theory)}}}
+
+[[https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/De_Alice%2527s_Abenteuer_im_Wunderland_Carroll_pic_23_edited_1_of_2.png/1920px-De_Alice%2527s_Abenteuer_im_Wunderland_Carroll_pic_23_edited_1_of_2.png][Cheshire Cat]][fn:3]
+
+#+BEGIN_QUOTE
+`But I don’t want to go among mad people,’ Alice remarked.
+`Oh, you can’t help that,’ said the Cat: `we’re all mad here. I’m mad. You’re mad.’
+`How do you know I’m mad?’ said Alice.
+`You must be,’ said the Cat, `or you wouldn’t have come here.’
+Alice didn’t think that proved it at all; however, she went on `And how do you know that you’re mad?’
+-- Alice's Adventures in Wonderland
+#+END_QUOTE
 
 很多人都不明白什么是Monad，并不是因为不会用，不知觉可能就在用某种 monad。\\
-定义和使用起来其实不难，困惑的大多应该是后面的这堆理论-- 范畴论。当然，我也没学过范畴论，只是略微看得懂写Haskell罢了。
+定义和使用起来其实不难，困惑的大多应该是后面的这堆理论-- 范畴论。当然，我也没学过范畴论，只是略微看得懂些 Haskell 罢了。
 
-我在书中[[https://book.douban.com/subject/26883736/][写过一章]]来解释，某人也尝试过很[[http://www.ruanyifeng.com/blog/2017/02/fp-tutorial.html][写博客解释]]，比如为了降低门槛用JS来，那Haskell/Scala的人出来喷你们前端这些不懂函数式的渣渣乱搞出来的东西根本就不是 monad。
+为了降低门槛, 我在书中也[[https://book.douban.com/subject/26883736/][写过一章]]用JavaScript来解释，某人也尝试过很[[http://www.ruanyifeng.com/blog/2017/02/fp-tutorial.html][写博客解释]]，没想到那些也不知道会不会 Haskell/Scala 的人就跑出来喷你们前端[fn:5]这些不懂函数式的渣渣乱搞出来的东西根本就不是 monad。
 
 我也画过一些图来解释，又会被嫌弃画风不好。但是，作为灵魂画师，我只 +是觉得自己萌萌的啊+ 在乎画的灵魂是否能够给你一点启发。好吧，讲这么学术的东西，还是用dot来画吧，看起来好正规呢。
 
-好了，安全带系好，我真的要开车了。为了 +防止鄙视链顶端的语言用户们喷再嫌弃+ 解释的不到位，就用 Haskell 好了（虽然haskell也没到鄙视链顶），其实也不难解释清楚 +才怪+ 。
+好了，安全带系好，我真的要开车了。为了防止{{{ruby(解释的不到位,又被喷)}}}，就用 Haskell/Scala 好了[fn:1]，其实也不难解释清楚 +才怪+ 。
 
 这里面很多很装逼的单词，它们都是 /斜体/ ，就算没看懂，把这些词记住也足够{{{ruby(装一阵子逼了,买一阵子萌了)}}}。
 
@@ -37,11 +48,11 @@
 - 东西 =O= （Object）
 - 两个东西的关系，箭头 =~>= （ /{{{ruby(态射,Morphism)}}}/ ）
 
-一些属性
+还必须带上一些属性: 
 - 一定有一个叫 id 的箭头，也叫做 1
 - 箭头可以 /{{{ruby(组合, compose)}}}/
 
-恩，就是这么简单
+恩, 就是这么简单!
 
 #+BEGIN_SRC dot :file images/category.svg :exports results
   digraph {
@@ -68,6 +79,15 @@ class Category (c :: * -> * -> *) where
   (.) :: c y z -> c x y -> c x z
 #+END_SRC
 
+
+而 scala 可以用 trait 来表示这个 typeclass
+#+BEGIN_SRC scala
+  trait Category[C[_, _]] {
+    val id[A]: C[A, A]
+    def <<<(a: C[Y, Z], b: C[X, Y]): C[X, Z] 
+  }
+#+END_SRC
+
 #+BEGIN_QUOTE
 注意到为什么我会箭头从右往左，你会发现这个方向跟 compose 的方向刚好一致
 #+END_QUOTE
@@ -76,9 +96,18 @@ class Category (c :: * -> * -> *) where
 - =class= 定义了一个 TypeClass， =Category= 是这个 TypeClass 的名字
 - Type class 类似于定义类型的规范，规范为 =where= 后面那一坨
 - 类型规范的对象是参数 ~(c:: * -> * -> *)~ ， =::= 后面是c的类型
-- c 是 /higher kind/ ，跟higher order function的定义差不多，它是接收类型，构造新类型的类型。这里的 c 接收一个类型，再接收一个类型，就可以返回个类型。
+- c 是 /higher kind/ =* -> *= ，跟higher order function的定义差不多，它是接收类型，构造新类型的类型。这里的 c 接收一个类型，再接收一个类型，就可以返回个类型。
+#+INDEX: Kind
 - ~id:: c a a~ 表示 c 范畴上的 a 到 a 的箭头
 - =.= 的意思 c 范畴上，如果喂一个 y 到 z 的箭头，再喂一个 x 到 y 的箭头，那么就返回 x 到 z 的箭头。
+
+另外 compose 在 haskell 中直接是 =.=, scala 中用 =<<<= 或者 =compose=
+
+总之, 用文字再读一遍上面这些代码就通了
+
+范畴 C 其实就包含
+1. 返回 A 对象到 A 对象的 id 箭头
+2. 可以组合 Y 对象到 Z 对象 和 X 对象到 Y 对象的箭头 compose
 
 {{{ruby(简单吧,hen nan ba)}}}?还没有高数抽象呢。
 
@@ -88,7 +117,7 @@ Haskell 类型系统范畴叫做 Hask
 
 在 Hask 范畴上：
 
-- 东西是类型
+- 东西就是类型
 - 箭头是类型的变换，即 =->=
 - id 就是 id 函数的类型 =a -> a=
 - compose 当然就是函数组合的类型
@@ -99,21 +128,31 @@ instance Category (Hask:: * -> * -> *) where
   (f . g) x = f (g x)
 #+END_SRC
 
-我们看见新的关键字 =instance= ，这表示 Hask 是 Type class Category 的实例类型，也就是说我们可以Hask的个构造器去真的构造一个类型
+我们看见新的关键字 =instance= ，这表示 Hask 是 Type class Category 的实例类型，也就是说对任意Hask类型, 那么就能找到它的 id 和 compose
 
-比如：
-#+BEGIN_SRC haskell
-(->) a a
+#+BEGIN_SRC scala
+  implicit val haskCat: Category[Hask[_, _]] = new Category[Hask] {
+    val id[A] = identity[A]
+    def <<<[X, Y, Z](a: Hask[Y, Z], b: Hask[X, Y]) = a compose b
+  }
 #+END_SRC
-就构造了一个从a类型到a类型的的类型
 
-构造出来的这个类型可以作为 id 函数的类型
+Scala 中, 只需要 new 这个 trait 就可以实现这个 typeclass
+
+其中: identity =Hask a a= 就是
 #+BEGIN_SRC haskell
-id :: (->) a a
+(->) a a -- or
+a -> a -- 因为 -> 是中缀构造器
 #+END_SRC
+
+#+BEGIN_SRC scala
+A => A
+#+END_SRC
+
 
 *** /Duel/
-每个 Category还有一个镜像，什么都一样，除了箭头是反的
+#+INDEX: Duel
+每个 Category 还有一个镜像，什么都一样，除了箭头是反的
 
 ** /{{{ruby(函子, Functor)}}}/
 #+INDEX: Functor
@@ -139,7 +178,7 @@ id :: (->) a a
           label=D
           "T a" -> "T a" [label="T id"]
           "T a" -> "T b" [label="T g"]
-          "T b" -> "T c" [label="T f"]
+ "T b" -> "T c" [label="T f"]
           "T a" -> "T c" [label="T f . g = T f . T g"]
   }
 
@@ -151,7 +190,7 @@ id :: (->) a a
 #+RESULTS:
 [[file:images/functor.svg]]
 
-所以大部分把Functor/Monad比喻成盒子其实在定义上是错的，虽然这样比喻比较容易理解，在使用上问题也不大。但是，Functor只是从一个范畴到另一个范畴的映射关系而已。
+所以大部分把 Functor/Monad 比喻成盒子其实在定义上是错的，虽然这样比喻比较容易理解，在使用上问题也不大。但是，Functor 只是从一个范畴到另一个范畴的映射关系而已。
 
 - 范畴间 东西的 Functor 标记为 =T(O)=
 - 范畴间 箭头的 Functor 标记为 =T(~>)=
@@ -164,6 +203,12 @@ class (Category c, Category d) => Functor c d t where
   fmap :: c a b -> d (t a) (t b)
 #+END_SRC
 
+#+BEGIN_SRC scala
+  trait Functor[C[_, _], D[_, _], T[_]] {
+    def fmap[A, B](c: C[A, B]): D[T[A], T[B]]
+  }
+#+END_SRC
+
 =Functor c d t= 这表示从范畴 c 到范畴 d 的一个 Functor t
 
 如果把范畴 c 和 d 都限制到 Hask 范畴
@@ -173,29 +218,44 @@ class Functor (->) (->) t where
   fmap :: (->) a b -> (->) (t a) (t b)
 #+END_SRC
 
+#+BEGIN_SRC scala
+trait Functor[=>[_, _], =>[_, _], T[_]] {
+ def fmap[A, B](c: =>[A, B]): =>[T[A], T[B]]
+}
+#+END_SRC
 =->= 在 Haskell 中是中缀类型构造器，所以是可以写在中间的
 
-这样就会变成我们熟悉的 Funtor 的 Typeclass（把Functor 的第一第二个参数去掉的话）
+这样就会变成我们熟悉的 Funtor 的 Typeclass[fn:2]
+
 #+BEGIN_SRC haskell
 class Functor t where
   fmap :: (a -> b) -> (t a -> t b)
+#+END_SRC
+
+#+BEGIN_SRC scala
+  trait Functor[T[_]] {
+   def fmap[A, B](c: A => B): T[A] => T[B]
+  }
 #+END_SRC
 
 而 /{{{ruby(自函子,endofunctor)}}}/ 就是这种连接相同范畴的 Functor，因为它从范畴 Hask 到达同样的范畴 Hask
 #+INDEX: endofunctor
 #+INDEX: 自函子
 
+这回看代码就很容易对应上图和概念了, 这里的自函子只是映射范畴 ~->~ 到 ~->~, 箭头函数那个箭头, 类型却变成了 t a
+
 这里的 fmap 就是 T(~>)，在 Hask 范畴上，所以是 T(->), 这个箭头是函数，所以也能表示成 T(f) 如果 =f:: a -> b=
 
-** /{{{ruby(Cat, +猫+)}}}/
-当我们把一个Category看成一个object，functor看成箭头，那么我们又得到了一个Category，这种object是category的category我们叫它 -- /Cat/
+** TODO /{{{ruby(Cat, +猫+)}}}/
+#+INDEX: 猫
+递归的, 当我们可以把一个 Category 看成一个 object，functor 看成箭头，那么我们又得到了一个 Category，这种 object 是 category 的 category 我们叫它 -- /Cat/
 
-已经没法讲了，看 TODO 图吧
+已经{{{ruby(没, meow)}}}的办法用语言描述这么高维度的事情了，看图吧...
 
 ** /{{{ruby(自然变换,Natural Transformations)}}}/
 #+INDEX: Natural Transformations
 #+INDEX: 自然变换
-Functor 是范畴间的映射，而 Functor 在 Cat 范畴又是个箭头，所以，Functor间的映射，也就是 Cat 范畴上的 Functor，叫做 /自然变换/
+Functor 是范畴间的映射，所以在这个 Cat 范畴中, 把范畴看成是对象, 那么 Functor 在 Cat 范畴又是个箭头
 
 #+BEGIN_SRC dot :file images/natrual-transformation.svg :exports results
   digraph {
@@ -242,22 +302,41 @@ Functor 是范畴间的映射，而 Functor 在 Cat 范畴又是个箭头，所�
 #+RESULTS:
 [[file:images/natrual-transformation.svg]]
 
-所以范畴 c 上的函子 f 到 g 的自然变化就可以表示成
+而 Functor 间也有映射，叫做 +喵的变换+ /自然变换/
+
+范畴 c 上的函子 f 到 g 的自然变化就可以表示成
 #+BEGIN_SRC haskell
 type Nat c f g = c (f a) (g a)
 #+END_SRC
 
+Scala 没有 rank n type[fn:4], 只能靠 apply 来 meme 了
+#+BEGIN_SRC scala
+trait Nat[C[_, _], F[_], G[_]] {
+  def apply[A]: C[F[A], G[A]]
+}
+#+END_SRC
+
 Hask 范畴上的自然变化就变成了
+
 #+BEGIN_SRC haskell
 type NatHask f g = f a -> g a
 #+END_SRC
 
-有趣的是，自然转换也满足箭头的概念，可以当成 functor 范畴上的箭头，所以又可以定义出来一个 Functor Catergory
+#+BEGIN_SRC scala
+trait NatHask[F[_], G[_]] {
+  def apply[A]: F[A] => G[A]
+}
+
+#+END_SRC
+
+有趣的是, 还可以继续升维度, 比如
 
 - 东西是函子
 - 箭头是自然变换
 
-要成为范畴，还有两点
+恭喜你到达 Functor 范畴.
+
+当然, 要成为范畴，还有两点
 - id 为 f a 到 f a 的自然变换
 - 自然变换的组合
 
@@ -275,12 +354,14 @@ functorF -> functorG[label="η"]
 #+RESULTS:
 [[file:images/functor-category.svg]]
 
-我们来梳理一下，已经不知道升了几个维度了，我们假设类型是第一维度
+别着急, 我们来梳理一下，如果已经不知道升了几个维度了，我们假设类型所在范畴是第一维度
 - 一维： Hask， 东西是类型，箭头是 ->
 - 二维： Cat， 东西是 Hask， 箭头是 Functor
 - 三维： Functor范畴， 东西是Functor， 箭头是自然变换
 
-感觉到达三维已经是极限了，尼玛还有完没完了，每升一个维度还要起这么多装逼的名字，再升维度就要一脸懵逼了呢。虽然维度不算太高，但是已经不能用简单的图来描述了，所以需要引入 String Diagram。
+感觉到达三维已经是极限了，尼玛还有完没完了，每升一个维度还要起这么多装逼的名字，再升维度老子就画不出来了
+
+所以这时候, 需要引入 String Diagram。
 
 ** String Diagram
 
@@ -605,3 +686,16 @@ tb >>= f = mu . fmap f tb
 - [[./part3.org][第三部分：{{{ruby(搞基猫呢, Advanced Monads)}}}]]
 
 当然我还没空全部写完，如果有很多人{{{ruby(预定,只要998)}}} Gumroad 上的 @@html: <script src="https://gumroad.com/js/gumroad.js"></script><a class="gumroad-button" href="https://gum.co/grokking-monad" target="_blank">Grokking Monad</a>@@ 电子书的话，我可能会稍微写得快一些。毕竟，写了也没人感兴趣也怪浪费时间的。不过，我猜也没几个人能看到这一行，就当是自言自语吧，怎么突然觉得自己好分裂。
+
+* Footnotes
+
+[fn:5] 等等, 写前端怎么了? JavaScript 只是我觉得顺手的若干语言之一, JS用户那么多, 写书当然要用 JS 啦, 难道用 Idris 那还能卖得掉吗?
+
+[fn:4] 别急, 后面马上讲到
+
+[fn:3] https://en.wikipedia.org/wiki/Cheshire_Cat
+
+[fn:1] 并不是说这两门语言一定在鄙视链顶端, 而是拥有强大类型系统的语言才能体现出范畴论的内容
+
+[fn:2] 这里可以把 Functor 的第一第二个参数消掉, 因为已经知道是在 Hask 范畴了
+
