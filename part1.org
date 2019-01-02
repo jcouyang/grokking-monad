@@ -18,7 +18,7 @@
 
 * 第一部分：{{{ruby(猫论,Catergory Theory)}}}
 
-https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/De_Alice%27s_Abenteuer_im_Wunderland_Carroll_pic_23_edited_1_of_2.png/1920px-De_Alice%27s_Abenteuer_im_Wunderland_Carroll_pic_23_edited_1_of_2.png [fn:3]
+https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/De_Alice%27s_Abenteuer_im_Wunderland_Carroll_pic_23_edited_1_of_2.png/1920px-De_Alice%27s_Abenteuer_im_Wunderland_Carroll_pic_23_edited_1_of_2.png [fn:1]
 
 #+BEGIN_QUOTE
 `But I don’t want to go among mad people,’ Alice remarked.
@@ -30,19 +30,32 @@ https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/De_Alice%27s_Abenteuer
 
 Alice didn’t think that proved it at all; however, she went on `And how do you know that you’re mad?’
 
--- Alice's Adventures in Wonderland
+    -- Alice's Adventures in Wonderland
 #+END_QUOTE
 
-很多人都不明白什么是Monad，并不是因为不会用，不知觉可能就在用某种 monad。\\
-定义和使用起来其实不难，困惑的大多应该是后面的这堆理论-- 范畴论。当然，我也没学过范畴论，只是略微看得懂些 Haskell 罢了。
+{{{ruby(单子,Monad)}}}是什么? 你也不懂, 我也不懂, 我们都不懂.
 
-为了降低门槛, 我在书中也[[https://book.douban.com/subject/26883736/][写过一章]]用JavaScript来解释，某人也尝试过很[[http://www.ruanyifeng.com/blog/2017/02/fp-tutorial.html][写博客解释]]，没想到那些也不知道会不会 Haskell/Scala 的人就跑出来喷你们前端[fn:5]这些不懂函数式的渣渣乱搞出来的东西根本就不是 monad。
+话说, 我又怎么知道你不懂呢?
+
+当然不懂, 不然, 你怎么会来到这里?
+
+我又是怎么知道自己不懂呢?
+
+因为, 我知道懂的人什么样子. 显然, 我不是.
+
+懂的人一定知道{{{ruby(猫论, Category Theory)}}}.
+
+懂猫论的人又不一定知道编程. 但是懂编程的人可以略懂猫论.
+
+编程是项技术, 即理论的降维. 所以要降低门槛, 比如我在书中也[[https://book.douban.com/subject/26883736/][写过一章]]用JavaScript来解释，某人也尝试过[[http://www.ruanyifeng.com/blog/2017/02/fp-tutorial.html][写博客解释]]，[fn:2]没想到那些也不知道会不会 Haskell/Scala 的人就跑出来喷你们前端[fn:3]这些不懂函数式的渣渣乱搞出来的东西根本就不是单子。
 
 我也画过一些图来解释，又会被嫌弃画风不好。但是，作为灵魂画师，我只 +是觉得自己萌萌的啊+ 在乎画的灵魂是否能够给你一点启发。好吧，讲这么学术的东西，还是用dot来画吧，看起来好正规呢。
 
-好了，安全带系好，我真的要开车了。为了防止{{{ruby(解释的不到位,又被喷)}}}，就用 Haskell/Scala 好了[fn:1]，其实也不难解释清楚 +才怪+ 。
+好了，安全带系好，我真的要开车了。为了防止{{{ruby(解释的不到位,又被喷)}}}，就用 Haskell/Scala 好了[fn:4]，其实也不难解释清楚 +才怪+ 。
 
-这里面很多很装逼的单词，它们都是 /斜体/ ，就算没看懂，把这些词记住也足够{{{ruby(装一阵子逼了,买一阵子萌了)}}}。
+这里面很多很装逼的单词，它们都是 /斜体/ ，就算没看懂，把这些词背下来也足够{{{ruby(装好一阵子逼了,买一阵子萌了)}}}。
+
+这里还有很多代码, 它们都成对出现, 第一段是 Haskell, 第二段是 Scala.
 
 ** /Category/
 #+INDEX: Catergory
@@ -75,7 +88,12 @@ Alice didn’t think that proved it at all; however, she went on `And how do you
 #+RESULTS:
 [[file:images/category.svg]]
 
-这些玩意对应到 haskell 的 typeclass 大致就是这样
+
+#+BEGIN_QUOTE
+注意到为什么我会箭头从右往左，接着看代码, 你会发现这个方向跟 compose 的方向刚好一致!
+#+END_QUOTE
+
+这些玩意对应到 haskell 的 typeclass 大致就是这样:
 
 #+BEGIN_SRC haskell
 class Category (c :: * -> * -> *) where
@@ -84,17 +102,13 @@ class Category (c :: * -> * -> *) where
 #+END_SRC
 
 
-而 scala 可以用 trait 来表示这个 typeclass
+而 Scala 可以用 trait 来表示这个 typeclass:
 #+BEGIN_SRC scala
   trait Category[C[_, _]] {
     val id[A]: C[A, A]
     def <<<(a: C[Y, Z], b: C[X, Y]): C[X, Z] 
   }
 #+END_SRC
-
-#+BEGIN_QUOTE
-注意到为什么我会箭头从右往左，你会发现这个方向跟 compose 的方向刚好一致
-#+END_QUOTE
 
 如果这是你第一次见到 Haskell 代码，没有关系，语法真的很简单 +才怪+
 - =class= 定义了一个 TypeClass， =Category= 是这个 TypeClass 的名字
@@ -105,9 +119,11 @@ class Category (c :: * -> * -> *) where
 - ~id:: c a a~ 表示 c 范畴上的 a 到 a 的箭头
 - =.= 的意思 c 范畴上，如果喂一个 y 到 z 的箭头，再喂一个 x 到 y 的箭头，那么就返回 x 到 z 的箭头。
 
-另外 compose 在 haskell 中直接是 =.=, scala 中用 =<<<= 或者 =compose=
+另外 compose 在 haskell 中直接是句号 =.=
 
-总之, 用文字再读一遍上面这些代码就通了
+scala 中用 =<<<= 或者 =compose=
+
+总之, 用文字再读一遍上面这些代码就了然了.
 
 范畴 C 其实就包含
 1. 返回 A 对象到 A 对象的 id 箭头
@@ -229,7 +245,7 @@ trait Functor[=>[_, _], =>[_, _], T[_]] {
 #+END_SRC
 =->= 在 Haskell 中是中缀类型构造器，所以是可以写在中间的
 
-这样就会变成我们熟悉的 Funtor 的 Typeclass[fn:2]
+这样就会变成我们熟悉的 Funtor 的 Typeclass[fn:5]
 
 #+BEGIN_SRC haskell
 class Functor t where
@@ -313,7 +329,7 @@ Functor 是范畴间的映射，所以在这个 Cat 范畴中, 把范畴看成�
 type Nat c f g = c (f a) (g a)
 #+END_SRC
 
-Scala 没有 rank n type[fn:4], 只能靠 apply 来 meme 了
+Scala 没有 rank n type[fn:6], 只能靠 apply 来 meme 了
 #+BEGIN_SRC scala
 trait Nat[C[_, _], F[_], G[_]] {
   def apply[A]: C[F[A], G[A]]
@@ -340,7 +356,7 @@ trait NatHask[F[_], G[_]] {
 
 恭喜你到达 Functor 范畴.
 
-当然, 要成为范畴，还有两点
+当然, 要成为范畴，还有两个属性:
 - id 为 f a 到 f a 的自然变换
 - 自然变换的组合
 
@@ -371,7 +387,7 @@ functorF -> functorG[label="η"]
 
 String Diagram 的概念很简单，就是点变线线变点。
 
-当有了自然变换之后，没法表示了呀，那原来的点和线都升一维度，变成线和面，这样，就腾出一个点来表示自然变换了。
+还记得当有了自然变换之后，三个维度已经没法表示了，那原来的点和线都升一维度，变成线和面，这样，就腾出一个点来表示自然变换了。
 
 #+CAPTION: String Diagram：自然变换是点，Functor是线，范畴是面
 [[file:images/p1-string-diagram.png]]
@@ -693,13 +709,15 @@ tb >>= f = mu . fmap f tb
 
 * Footnotes
 
-[fn:5] 等等, 写前端怎么了? JavaScript 只是我觉得顺手的若干语言之一, JS用户那么多, 写书当然要用 JS 啦, 难道用 Idris 那还能卖得掉吗?
+[fn:1] https://en.wikipedia.org/wiki/Cheshire_Cat
 
-[fn:4] 别急, 后面马上讲到
+[fn:2] 如果没看就刚好不要看了, 确实有些误导
 
-[fn:3] https://en.wikipedia.org/wiki/Cheshire_Cat
+[fn:3] 等等, 写前端怎么了? JavaScript 只是我觉得顺手的若干语言之一, JS用户那么多, 写书当然要用 JS 啦, 难道用 Idris 那还能卖得掉吗?
 
-[fn:1] 并不是说这两门语言一定在鄙视链顶端, 而是拥有强大类型系统的语言才能体现出范畴论的内容
+[fn:4] 并不是说这两门语言一定在鄙视链顶端, 而是拥有强大类型系统的语言才能体现出范畴论的内容
 
-[fn:2] 这里可以把 Functor 的第一第二个参数消掉, 因为已经知道是在 Hask 范畴了
+[fn:5] 这里可以把 Functor 的第一第二个参数消掉, 因为已经知道是在 Hask 范畴了
+
+[fn:6] 别急, 后面马上讲到
 
