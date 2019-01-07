@@ -553,7 +553,7 @@ unembed :: Functor f => (forall b . (a -> b) -> f b) -> f a
 unembed f = f id
 #+END_SRC
 
-Scala 语言没有 Rank N Type支持, 但是[[自然变换]] 提到过可以用 =apply= 来模拟. 其实可以使用 Cats 的 [[https://typelevel.org/cats/datatypes/functionk.html][FunctionK(~>)]] 更方便:
+Scala 语言没有 Rank N Type支持, 但是 [[*/{{{ruby(自然变换,Natural Transformations)}}}/][{{{ruby(自然变换,Natural Transformations)}}}]] 提到过可以用 =apply= 来模拟. 其实可以使用 Cats 的 [[https://typelevel.org/cats/datatypes/functionk.html][FunctionK(~>)]] 更方便:
 #+BEGIN_SRC scala
   def embed[F[_], A](fa: F[A])(implicit f: Functor[F]): (A => ?) ~> F =
     Lambda[(A => ?) ~> F](f.fmap(_)(fa))
