@@ -417,6 +417,7 @@ compose的方向是从右往左，从下到上。
 f :: a -> b
 f':: b -> a
 #+END_SRC
+
 那么 f 与 f' 同构，因为 f . f' = id = f' . f
 
 伴随函子的 FG 组合是 C 范畴的 id 函子 F . G = 1_c
@@ -448,6 +449,12 @@ class Endofunctor c t => Monad c t where
   mu  :: c (t (t a)) (t a)
 #+END_SRC
 
+#+BEGIN_SRC scala
+  trait Monad[C[_, _], T[_]]] extends Endofunctor[C, T] {
+    def eta[A]: C[A, T[A]]
+    def mu[A]: C[T[T[A]], T[A]]
+  }
+#+END_SRC
 同样，把 c = Hask 替换进去，就得到更类似我们 Haskell 中 Monad 的定义
 #+BEGIN_SRC haskell
 class Endofunctor m => Monad m where
@@ -455,6 +462,12 @@ class Endofunctor m => Monad m where
   mu :: m m a -> m a
 #+END_SRC
 
+#+BEGIN_SRC scala
+  trait Monad[M[_]] extends Endofunctor[M] {
+    def eta[A]: A => M[A]
+    def mu[A]: M[M[A]] => M[A]
+  }
+#+END_SRC
 要推出单子的 \eta 变换，只需要让 FG = T
 #+CAPTION: 伴随函子的 \epsilon 就是单子的 \eta
 [[file:images/p1-ajunction-functor-to-monad-eta.png]]
@@ -475,7 +488,6 @@ class Endofunctor m => Monad m where
 
 换到代码上来说
 #+BEGIN_SRC haskell
-  class Endofunctor m => Monad m where
     (mu . eta) m = m
 #+END_SRC
 
@@ -541,6 +553,14 @@ unembed :: Functor f => (forall b . (a -> b) -> f b) -> f a
 unembed f = f id
 #+END_SRC
 
+Scala 语言没有 Rank N Type支持, 但是[[自然变换]] 提到过可以用 =apply= 来模拟. 其实可以使用 Cats 的 [[https://typelevel.org/cats/datatypes/functionk.html][FunctionK(~>)]] 更方便:
+#+BEGIN_SRC scala
+  def embed[F[_], A](fa: F[A])(implicit f: Functor[F]): (A => ?) ~> F =
+    Lambda[(A => ?) ~> F](f.fmap(_)(fa))
+  def unembed[F[_]](fnk: (A => ?) ~> F): F[A] =
+    fnk(identity)
+#+END_SRC
+
 embed 可以把 functor =f a= 变成 =(a -> b) -> f b=
 
 unembed 是反过来， =(a -> b) -> f b= 变成 =f a=
@@ -582,30 +602,53 @@ unembed 是反过来， =(a -> b) -> f b= 变成 =f a=
 *** Rank N Type
 #+INDEX: Arbitrary-rank polymorphism
 #+INDEX: Rank N Type
-- Monomorphic Rank 0 / 0级单态: t
-- Polymorphic Rank 1 / 1级 +变态+ 多态: forall a. a -> t
-- Polymorphic Rank 2 / 2级多态: (forall a. a -> t) -> t
-- Polymorphic Rank 3 / 3级多态: ((forall a. a -> t) -> t) -> t
 
-看rank几只要数左边 forall 的括号嵌套层数就好了
+说好的要解释 Rank N Type
 
-一级多态锁定全部类型变化中的类型a
+Haskell 中可以不用声明类型, 但是其实是省略掉 universally quantified =forall=, 如果把 forall 全部加回来,
+就明了很多:
 
-二级多态可以分别确定 a -> t 这个函数的类型多态
+- Monomorphic Rank 0 / 0级单态[fn:7]: t
+- Polymorphic Rank 1 / 1级 +变态+ 多态: forall a b. a -> b
+- Polymorphic Rank 2 / 2级多态: forall c. (forall a b. a -> b) -> c
+- Polymorphic Rank 3 / 3级多态: forall d . (forall c . (forall a b . a -> b) -> c) -> d
 
-比如
+看 rank 几只要数左边 forall 的个数就好了.
+
+一级多态只锁定一次类型 a 和 b
+
+二级多态可以分两次确定类型, 第一次确定 c, 第二次确定 a b
+
+三级多台分三次: 第一次 d, 第二次 c, 第三次 a b
+
+比如:
+
 #+BEGIN_SRC haskell
-rank2 :: (forall a. a -> a) -> (Bool, Char)
-rank2 f = (f True, f 'a')
+rank2 :: forall b c . b -> c -> (forall a. a -> a) -> (b, c)
+rank2 b c f = (f b, f c)
+
+rank2 True 'a' id
+-- (True, 'a')
+#+END_SRC
+
+#+BEGIN_SRC scala
+  def rank2[B, C](b: B, c: C)(fnk: Id ~> Id): (B, C) =
+    (fnk(b), fnk(c))
+  rank2(true, 'a')(FunctionK.id[Id])
 #+END_SRC
 
 - f 在 =f True= 时类型 =Boolean -> Boolean= 是符合 =forall a. a->a= 的
-- 在 =f 'a'= 时类型是 =Char -> Char= 也符合 =forall a. a->a=
+- 与此同时 =f 'a'= 时类型确实是 =Char -> Char= 但也符合 =forall a. a->a=
 
-但是到 rank1 类型系统就懵逼了
+如果是 rank1 类型系统就懵逼了:
 #+BEGIN_SRC haskell
-rank1 :: forall a. (a -> a) -> (Bool, Char)
-rank1 f = (f True, f 'a')
+rank1 :: forall a b c . b -> c -> (a -> a) -> (b, c)
+rank1 b c f = (f b, f c)
+#+END_SRC
+
+#+BEGIN_SRC scala
+def rank1[A, B, C](b: B, c: C)(fn: A => A): (B, C) =
+  (fn(b), fn(c))
 #+END_SRC
 f 在 =f True= 是确定 a 是 Boolean，在rank1多态是时就确定了 =a->a= 的类型一定是 =Boolean -> Boolean=
 
@@ -669,31 +712,48 @@ f 在 =f True= 是确定 a 是 Boolean，在rank1多态是时就确定了 =a->a=
 #+RESULTS:
 [[file:images/kleisli.svg]]
 
-Functor 的 Catergory 叫做 Functor Catergory，因为有箭头 -- 自然变换。Monad 也可以定义出来一个 Catergory（当然由于Monad是 Endofunctor，所以他也可以是 自函子范畴），叫做 Kleisli Catergory，那么 Kleisli 的箭头是什么？
+{{{ruby(函子,Functor)}}} 的范畴叫做 {{{ruby(函子范畴,Functor Catergory)}}}, 自然变换是其箭头。那{{{ruby(单子,Monad)}}}也可以定义一个范畴吗?[fn:8]
 
+是的, 这个范畴名字叫做 +单子范畴+[fn:9] {{{ruby(可莱斯利范畴,Kleisli Catergory)}}}[fn:10]，那么 Kleisli 的箭头是什么？
 我们看定义，Kleisli Catergory
+
 1. 箭头是 Kleisli 箭头 =a -> T b=
 2. 东西就是c范畴中的东西. 因为 a 和 b 都是 c 范畴上的， 由于T是自函子，所以 T b 也是 c 范畴的
 
-看到图上的 {{{ruby(T f, fmap f)}}} 和 \mu 了没？
+看到图上的 {{{ruby(T f, fmap f)}}} 和 \mu 了没？[fn:11]
 
 #+BEGIN_SRC haskell
 f :: b -> T c
-fmap f :: T b -> T^2 c
-mu :: T^2 c -> T c
+fmap f :: T b -> T T c
+mu :: T T c -> T c
 #+END_SRC
 
-紫色的箭头连起来（compose）就是 T f'，所以,
+#+BEGIN_SRC scala
+def f[T[_], B, C](b: B): T[C]
+def fmap[T[_], B, C](f: B => C)(tb: T[B]): T[T[C]]
+def mu[T[_], C](ttc: T[T[C]]): T[C]
+#+END_SRC
+
+紫色的箭头 =T f=[fn:12] 和紫色的虚线箭头 \mu 连起来就是 =T f'=, 那么最出名的 ~>>=~ 符号终于出来了:
 #+BEGIN_SRC haskell
-tb >>= f = mu . fmap f tb
+tb >>= f = (mu . fmap f) tb
 #+END_SRC
 
-大火箭则是蓝色箭头的组合
-#+BEGIN_SRC haskel
+#+BEGIN_SRC scala
+def flatMap[T[_], B, C](f: B => T[C])(tb: T[B]): T[C] = (mu compose fmap(f))(tb)
+#+END_SRC
+
+下面这个大火箭 ~<=<~ 可以把蓝色箭头组合起来.
+#+BEGIN_SRC haskell
 (f <=< g) = mu . T f . g = mu . fmap f . g
 #+END_SRC
 
-而且大火箭就是 Kleisli 范畴的 compose
+#+BEGIN_SRC scala
+def <=<[T[_], A, B, C](f: B => T[C])(g: A => T[B]): A => T[C] =
+  mu compose fmap(f) compose g
+#+END_SRC
+
+因此大火箭就是 Kleisli 范畴的 =compose=
 
 #+BEGIN_SRC haskell
 (<=<) :: Monad T => (b -> T c) -> (a -> T b) -> (a -> T c)
@@ -709,11 +769,23 @@ tb >>= f = mu . fmap f tb
 
 * Footnotes
 
+[fn:12] 即 =fmap f=
+
+[fn:11] (敲黑板) 就是紫色那根嘛!
+
+[fn:10] 这个是我瞎翻译的, 但是读出来就是这么个意思, 真的, 不骗你, 照这么读绝对装的一手好逼, 不会被嘲笑的
+
+[fn:9] 怎么说也是函数式编程的核心,怎么可以叫的这么low这么直接
+
+[fn:8] 当然, 单子是自函子，所以也可以是自函子范畴
+
+[fn:7] 也就不是不变态
+
 [fn:1] https://en.wikipedia.org/wiki/Cheshire_Cat
 
 [fn:2] 如果没看就刚好不要看了, 确实有些误导
 
-[fn:3] 等等, 写前端怎么了? JavaScript 只是我觉得顺手的若干语言之一, JS用户那么多, 写书当然要用 JS 啦, 难道用 Idris 那还能卖得掉吗?
+[fn:3] 等等, 写前端怎么了? JavaScript 只是我觉得顺手的若干语言之一, JS用户那么多, 写书当然要用 JS 啦, 难道用 Idris 那还能卖得掉吗? +当然最后用JS也没怎么卖掉...+
 
 [fn:4] 并不是说这两门语言一定在鄙视链顶端, 而是拥有强大类型系统的语言才能体现出范畴论的内容
 
