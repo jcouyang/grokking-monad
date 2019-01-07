@@ -272,7 +272,7 @@ class Functor t where
 
 已经{{{ruby(没, meow)}}}的办法用语言描述这么高维度的事情了，看图吧...
 
-** /{{{ruby(自然变换,Natural Transformations)}}}/
+** /{{{ruby(自然变换,Natural Transformations)}}}/<<NT>>
 #+INDEX: Natural Transformations
 #+INDEX: 自然变换
 Functor 是范畴间的映射，所以在这个 Cat 范畴中, 把范畴看成是对象, 那么 Functor 在 Cat 范畴又是个箭头
@@ -553,7 +553,7 @@ unembed :: Functor f => (forall b . (a -> b) -> f b) -> f a
 unembed f = f id
 #+END_SRC
 
-Scala 语言没有 Rank N Type支持, 但是 [[*/{{{ruby(自然变换,Natural Transformations)}}}/][{{{ruby(自然变换,Natural Transformations)}}}]] 提到过可以用 =apply= 来模拟. 其实可以使用 Cats 的 [[https://typelevel.org/cats/datatypes/functionk.html][FunctionK(~>)]] 更方便:
+Scala 语言没有 Rank N Type支持, 但是 [[NT][{{{ruby(自然变换,Natural Transformations)}}}]] 提到过可以用 =apply= 来模拟. 其实可以使用 Cats 的 [[https://typelevel.org/cats/datatypes/functionk.html][FunctionK(~>)]] 更方便:
 #+BEGIN_SRC scala
   def embed[F[_], A](fa: F[A])(implicit f: Functor[F]): (A => ?) ~> F =
     Lambda[(A => ?) ~> F](f.fmap(_)(fa))
