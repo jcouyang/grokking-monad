@@ -7,6 +7,8 @@
 #+LATEX_HEADER: \usepackage{fontspec}
 #+LATEX_HEADER: \usepackage{xeCJK}
 #+LATEX_HEADER: \setCJKmainfont{STXihei}
+#+description: 全卷
+#+index: Catergory Theory!范畴论完全装逼手册 全
 
 #+OPTIONS: ^:t todo:nil toc:t num:3
 #+MACRO: ruby @@html:<ruby>$1<rt>$2</rt></ruby>@@
