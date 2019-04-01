@@ -1,0 +1,37 @@
+#+TITLE: 范畴论完全装逼手册 / Grokking Monad
+#+Date: <2017-02-10 Fri>
+#+AUTHOR: 欧阳继超
+#+LATEX_CLASS: book
+#+LATEX_CLASS_OPTIONS: [a5paper]
+#+LATEX_HEADER: \usepackage[unicode,dvipdfm]{hyperref}
+#+LATEX_HEADER: \usepackage{fontspec}
+#+LATEX_HEADER: \usepackage{xeCJK}
+#+LATEX_HEADER: \setCJKmainfont{STXihei}
+#+description: 全卷
+#+index: Catergory Theory!范畴论完全装逼手册 全
+
+#+OPTIONS: ^:t todo:nil toc:t num:3
+#+MACRO: ruby @@html:<ruby>$1<rt>$2</rt></ruby>@@
+#+EXPORT_FILE_NAME: index.org
+#+BEGIN_CENTER
+FBI Warning
+#+HTML: 本文所有文字与图片遵循 <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/3.0/">CC 署名-非商业性使用-禁止演绎 3.0 许可协议</a><br/><a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/3.0/88x31.png" /></a>
+#+END_CENTER
+
+ 👇PDF，kindle， epub格式的书现已开放购买...
+
+购买链接是 gumroad，需要科学上网才能点开，如果你不能科学上网，就不要买了（当然也没法买），把这六块钱投资到科学上网上吧。
+
+#+HTML: <script src="https://gumroad.com/js/gumroad-embed.js"></script><div class="gumroad-product-embed" data-gumroad-product-id="grokking-monad"><a href="https://gumroad.com/l/grokking-monad"><img src="https://blog.oyanglul.us/grokking-monad/cover.jpg"></img></a></div>
+
+
+#+INCLUDE: "./part1.org"
+#+INCLUDE: "./part2.org"
+#+INCLUDE: "./part3.org"
+
+* References
+- http://dev.stephendiehl.com/hask
+- https://en.wikibooks.org/wiki/Haskell/Category_theory
+- https://www.youtube.com/watch?v=ZKmodCApZwk
+- https://www.youtube.com/watch?v=kiXjcqxVogE&list=PL50ABC4792BD0A086&index=5
+- https://wiki.haskell.org/All_About_Monads

@@ -176,7 +176,7 @@ A => A
 #+INDEX: Duel
 每个 Category 还有一个镜像，什么都一样，除了箭头是反的
 
-** /{{{ruby(函子, Functor)}}}/
+** 函子 / Functor
 #+INDEX: Functor
 #+INDEX: 函子
 两个范畴中间可以用叫 Functor 的东西来连接起来，简称 T。
@@ -269,15 +269,16 @@ class Functor t where
 这里的 fmap 就是 T(~>)，在 Hask 范畴上，所以是 T(->), 这个箭头是函数，所以也能表示成 T(f) 如果 =f:: a -> b=
 
 ** TODO /{{{ruby(Cat, +猫+)}}}/
-#+INDEX: 猫
+
 递归的, 当我们可以把一个 Category 看成一个 object，functor 看成箭头，那么我们又得到了一个 Category，这种 object 是 category 的 category 我们叫它 -- /Cat/
 
 已经{{{ruby(没, meow)}}}的办法用语言描述这么高维度的事情了，看图吧...
 
-** /{{{ruby(自然变换,Natural Transformations)}}}/<<NT>>
+** 自然变换 / Natural Transformations <<NT>>
+
+Functor 是范畴间的映射，所以在这个 Cat 范畴中, 把范畴看成是对象, 那么 Functor 在 Cat 范畴又是个箭头
 #+INDEX: Natural Transformations
 #+INDEX: 自然变换
-Functor 是范畴间的映射，所以在这个 Cat 范畴中, 把范畴看成是对象, 那么 Functor 在 Cat 范畴又是个箭头
 
 #+BEGIN_SRC dot :file images/natrual-transformation.svg :exports results
   digraph {
