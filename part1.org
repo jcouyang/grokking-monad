@@ -170,8 +170,6 @@ a -> a -- 因为 -> 是中缀构造器
 #+BEGIN_SRC scala
 A => A
 #+END_SRC
-
-
 *** /Duel/
 #+INDEX: Duel
 每个 Category 还有一个镜像，什么都一样，除了箭头是反的
