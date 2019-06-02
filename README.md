@@ -1,6 +1,6 @@
 # 序
 
-[![](./cover.jpg "范畴论完全装逼手册")](https://gumroad.com/l/grokking-monad)
+[![](./images/cover.jpg "范畴论完全装逼手册")](https://gumroad.com/l/grokking-monad)
 
 > **这不是** 一本 Haskell 的教科书，即使我会解释涉及到的 Haskell 语法。
 
