@@ -7,7 +7,7 @@
 #+HTML_HEAD_EXTRA: <meta content="https://static-2.gumroad.com/res/gumroad/1806288866681/asset_previews/dd7001d38dd3151e4f02f72579258e2f/retina/don_27t_20wish_20for_20it.work_20for_20it..png" property="og:image">
 #+description: Type classes and some Monads
 
-- *[[./part2.org][part2: Monads]]* 👈
+- *[[./part2.org][part2: Applied Monads]]* 👈
 - [[./part3.org][part3: Advanced Monads]]
 
 #+BEGIN_QUOTE
@@ -19,3 +19,5 @@ you can actually run =sbt testOnly *<className>= to finish these exercises
 #+INCLUDE: "https://raw.githubusercontent.com/jcouyang/scala-dojo/master/src/test/scala/2-typeclasses.org"
 
 #+INCLUDE: "https://raw.githubusercontent.com/jcouyang/scala-dojo/master/src/test/scala/3-monad.org"
+
+#+INCLUDE: "./choice.org::*Choice"

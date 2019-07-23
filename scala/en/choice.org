@@ -1,0 +1,91 @@
+#+TITLE: Applied Category Theory in Scala
+#+SUBTITLE: Choice
+#+DATE: <2019-07-23 Tue>
+#+HTML_HEAD_EXTRA: <meta property="og:title" content="Grokking Monad in Scala" />
+#+HTML_HEAD_EXTRA: <meta property="og:description" content="Typeclass Choice" />
+#+HTML_HEAD_EXTRA: <meta property="og:type" content="article" />
+#+HTML_HEAD_EXTRA: <meta content="https://static-2.gumroad.com/res/gumroad/1806288866681/asset_previews/dd7001d38dd3151e4f02f72579258e2f/retina/don_27t_20wish_20for_20it.work_20for_20it..png" property="og:image">
+#+description: Typeclass Choice
+
+* Choice
+  :PROPERTIES:
+  :CUSTOM_ID: applied-category-theory-in-scala---choice
+  :END:
+
+** Rationale
+  :PROPERTIES:
+  :CUSTOM_ID: rationale
+  :END:
+
+usually we deal with function more often, we're so familiar with =A => B=
+
+says if we have two function =A => C= and =B => C=
+
+how can we *compose* them into a *single function* that can take either
+A or B and produce a C?
+
+in Scala the return type will be like =Either[A, B] => C=
+
+This is exactly =Choice= /typeclass/ for, replacing ==>= with =F=, you
+will get a =Choice=
+
+#+BEGIN_SRC scala
+    trait Choice[F[_, _]] {
+      def choice(fac: F[A, C], fbc: F[B, C]): F[Either[A, B], C]
+    }
+#+END_SRC
+
+** Applied
+  :PROPERTIES:
+  :CUSTOM_ID: applied
+  :END:
+
+A very useful case of =Choice= typeclass would be like middleware in
+HTTP server.
+
+Take Http4s for example:
+
+*** HttpRoutes[F]
+   :PROPERTIES:
+   :CUSTOM_ID: httproutesf
+   :END:
+
+http4s defined routes using =Kleisli=
+
+#+BEGIN_SRC scala
+    type HttpRoutes[F[_]] = Kleisli[OptionT[F, ?], Request[F], Response[F]]
+    def routes[F[_]]: HttpRoutes[F] = ???
+#+END_SRC
+
+But before going through =routes=, most request must pass middleware to
+ensure the request has correct or not.
+
+A authentication =middleware= could end up with 2 kinds of result
+
+1. return =Unauthorized= instantly while token is invalid
+2. Pass =Request[F]= through if token if valid
+
+So the return type of =middleware= will be like
+=Either[Response[F], Request[F]]=
+
+*** Middleware[F]
+   :PROPERTIES:
+   :CUSTOM_ID: middlewaref
+   :END:
+
+if we define middleware like
+
+#+BEGIN_SRC scala
+    type Middleware[F[_]] = Kleisli[OptionT[F, ?], Request[F], Either[Response[F], Request[F]]]
+    val passThrough: Kleisli[OptionT[F, ?], Response[F], Response[F]] = Kleisli.ask[OptionT[F, ?], Response[F]]
+    def middleware[F[_]]: Middleware[F] = ???
+#+END_SRC
+
+[[https://user-images.githubusercontent.com/1235045/61630772-ea415700-accb-11e9-9b4b-5abffa0d5bf4.png]]
+
+Compose middleware and routes together is now easy thanks to =Kleisli=
+has instance of =Choice=
+
+#+BEGIN_SRC scala
+    middleware andThen passThrough.choice(routes)
+#+END_SRC
