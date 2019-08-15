@@ -18,12 +18,25 @@
 #+RESULTS:
 : ob-haskell
 
+
 * 第二部分：{{{ruby(食用猫呢, Practical Monads)}}}
-第一部分理论部分都讲完了， 如果你读到这里还没有被这些吊炸天的概念搞daze，接下来可以看看它到底跟我们编程有鸟关系呢？
 
-第二部分将介绍由这些概念产生的一些实用的monad instances，这些 monad 都通过同样的抽象方式，解决了分离计算与副作用的工作。
+https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Alice_through_the_looking_glass.jpg/761px-Alice_through_the_looking_glass.jpg
 
-最后一部分，我们还可以像 IO monad 一样，通过 free 或者 Eff 自定义自己的计算，和可能带副作用的解释器。
+#+BEGIN_QUOTE
+“If I had a world of my own, everything would be nonsense. 
+Nothing would be what it is, because everything would be what it isn't.
+And contrary wise, what is, it wouldn't be. And what it wouldn't be, it would. You see?”
+― Lewis Carroll, Alice's Adventures in Wonderland & Through the Looking-Glass 
+#+END_QUOTE
+
+如果有一个单子的世界, 那一切都说不通了.
+没有什么是应该的, 因为所有东西都是它不是的东西.
+反过来说, 是又不会是, 而不会是的又会是. 懂没?
+
+到底什么是, 什么不是, 我们看编程世界里到底什么是单子？
+
+这一部分将介绍由一些实用的{{{ruby(单子实例,monad instances)}}}，通过这些单子实例，解决了分离计算与副作用, 已经组合性的问题。
 
 ** COMMENT Applicative
 *** Alternative
@@ -31,12 +44,14 @@
 *** Bifunctor
 
 ** Identity
-这可能是最简单的 monad 了。不包含任何计算
+这可能是最简单的单子了。它本身不包含任何计算
 #+BEGIN_SRC haskell :session part2
 newtype Identity a = Identity { runIdentity :: a }
 #+END_SRC
 
-#+RESULTS:
+#+BEGIN_SRC scala
+case class Identity[A](run: A)
+#+END_SRC
 
 这里使用 =newtype= 而不是 =data= 是因为 =Identity= 与 =runIdentity= 是 isomorphic （同构，忘了的话回去翻第一部分）
 
@@ -61,6 +76,10 @@ runIdentity (Identity 1)
 #+RESULTS:
 : 1
 
+#+BEGIN_SRC scala
+Identity(1).run
+#+END_SRC
+
 会返回 1
 
 Identity 可以实现 Functor 和 Monad，就得到 Identity functor 和 Identity monad
@@ -73,6 +92,11 @@ Identity 可以实现 Functor 和 Monad，就得到 Identity functor 和 Identit
     Identity a >>= f = f a
 #+END_SRC
 
+#+BEGIN_SRC scala
+implicit val identityFunctor: Functor[Identity] = new Functor[Identity] {
+  def fmap[A, B](f: A => B): Identity[A] => Identity[B]
+}
+#+END_SRC
 可以看到 Identity 即是构造器，也是解构器，在模式匹配是可以 destructure 值。例如上面Functor 实现中的 =fmap f (Identity a)= , 假如fmap的是 =Identity 1=, 那么这个模式匹配到 =(Identity a)= 时会把 =1= 放到 =a= 的位置。
 
 Identity 看起来什么也没有干，就跟 identity 函数一样，但是在后面讲到 State monad时你会发现他的价值。
@@ -82,6 +106,13 @@ Identity 看起来什么也没有干，就跟 identity 函数一样，但是在�
 #+BEGIN_SRC haskell
 data Maybe a = Just a | Nothing
 #+END_SRC
+
+#+BEGIN_SRC scala
+trait Option[+A]
+case class Some[A](a: A) extends Option[A]
+case object None extends Option[Nothing]
+#+END_SRC
+
 Haskell中定义一个ADT十分简单，不像Scala那么啰嗦。左边是类型构造器，右边有数据构造器，你会发现有一根竖线 =|= ， 它分隔着两个构造器
 - Just
 - Nothing
