@@ -93,9 +93,11 @@ Identity 可以实现 Functor 和 Monad，就得到 Identity functor 和 Identit
 #+END_SRC
 
 #+BEGIN_SRC scala
-implicit val identityFunctor: Functor[Identity] = new Functor[Identity] {
-  def fmap[A, B](f: A => B): Identity[A] => Identity[B]
-}
+  implicit val identityFunctor: Functor[Identity] = new Functor[Identity] {
+    def fmap[A, B](f: A => B): Identity[A] => Identity[B] = {
+      case Identity(a) => Identity(f(a))
+    }
+  }
 #+END_SRC
 可以看到 Identity 即是构造器，也是解构器，在模式匹配是可以 destructure 值。例如上面Functor 实现中的 =fmap f (Identity a)= , 假如fmap的是 =Identity 1=, 那么这个模式匹配到 =(Identity a)= 时会把 =1= 放到 =a= 的位置。
 
