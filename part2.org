@@ -43,8 +43,9 @@ And contrary wise, what is, it wouldn't be. And what it wouldn't be, it would. Y
 *** Arrow
 *** Bifunctor
 
-** Identity
-这可能是最简单的单子了。它本身不包含任何计算
+** Identity 本身就有[fn:5]
+
+{{{ruby(本身就有单子, Identity Monad)}}} 可能是最简单的单子了。本身不包含任何计算, 且只有一个构造器:
 #+BEGIN_SRC haskell :session part2
 newtype Identity a = Identity { runIdentity :: a }
 #+END_SRC
@@ -53,16 +54,16 @@ newtype Identity a = Identity { runIdentity :: a }
 case class Identity[A](run: A)
 #+END_SRC
 
-这里使用 =newtype= 而不是 =data= 是因为 =Identity= 与 =runIdentity= 是 isomorphic （同构，忘了的话回去翻第一部分）
+这里使用 =newtype= 而不是 =data= 是因为 =Identity= 与 =runIdentity= 是同构的[fn:2].
 
 #+BEGIN_SRC haskell
 Identity :: a -> Identity a
 runIdentity :: Identity a -> a
 #+END_SRC
 
-所以 ~runIdentity . Identity = id~ ，所以他们是同构的。
+你看 ~runIdentity . Identity = id~ ，所以他们是同构的。
 
-左边的 =Identity= 是类型构造器, 接收类型 =a= 返回 =Identity a= 类型
+左边的 =Identity= 是类型构造器[fn:1], 接收类型 =a= 返回 =Identity a= 类型
 
 如果 a 是 Int，那么就得到一个 =Identity Int= 类型。
 
@@ -82,7 +83,8 @@ Identity(1).run
 
 会返回 1
 
-Identity 可以实现 Functor 和 Monad，就得到 Identity functor 和 Identity monad
+Identity 可以实现 Functor 和 Monad，就得到 Identity functor 和 Identity monad:
+
 #+BEGIN_SRC haskell
   instance Functor Identity where
     fmap f (Identity a) = Identity (f a)
@@ -92,22 +94,43 @@ Identity 可以实现 Functor 和 Monad，就得到 Identity functor 和 Identit
     Identity a >>= f = f a
 #+END_SRC
 
+而 Scala 则需要用 =implicit= 来实现 typeclass:
+
 #+BEGIN_SRC scala
   implicit val identityFunctor: Functor[Identity] = new Functor[Identity] {
     def fmap[A, B](f: A => B): Identity[A] => Identity[B] = {
       case Identity(a) => Identity(f(a))
     }
   }
+
+  implicit val identityMonad: Monad[Identity] = new Monad[Identity] {
+    def pure[A](a: A): Id[A] = Identity(a)
+    def flatMap[A, B](f: A => Identity[B]): Identity[A] => Identity[B] = {
+      case Identity(a) => f(a)
+    }
+  }
 #+END_SRC
-可以看到 Identity 即是构造器，也是解构器，在模式匹配是可以 destructure 值。例如上面Functor 实现中的 =fmap f (Identity a)= , 假如fmap的是 =Identity 1=, 那么这个模式匹配到 =(Identity a)= 时会把 =1= 放到 =a= 的位置。
 
-Identity 看起来什么也没有干，就跟 identity 函数一样，但是在后面讲到 State monad时你会发现他的价值。
+可以看到 Identity 即是{{{ruby(构造器,constructor)}}}，也是{{{ruby(解构器,destructure)}}}，利用模式匹配是可以解构出值的。
 
-** Maybe
-这是一个超级简单的 Monad，首先，需要定义这个一个 {{{ruby(代数数据类型, Algebra Data Type(ADT))}}}
+例如上面 Functor 实现中的 =fmap f (Identity a)=, 假如 =fmap= 的是 =Identity 1=,
+那么这个模式匹配到 =(Identity a)= 时会通过解构器把 =1= 放到 =a= 的位置。
+
+Identity 看起来什么也没有干，就跟 identity 函数一样，但是实际上, 它也跟 identity 相对于函数一样
+相对于类型非常有用.
+
+** Maybe 可能会有
+{{{ruby(可能会有单子,Maybe Monad)}}}是一个超级简单的但比本身就有稍稍复杂的单子.
+
+因为它拥有比本身就有多一个的类型构造器，类似这样的叫做 {{{ruby(代数数据类型, Algebra Data Type(ADT))}}}
+
 #+BEGIN_SRC haskell
 data Maybe a = Just a | Nothing
 #+END_SRC
+
+你看, 不管是 =Just= 还是 =Nothing= 都可以构造出一个 =Maybe= 类型的数据来.
+
+ADT 在 Scala 可以用 trait 表示, 而且, Scala 中的 =Maybe= 叫做 =Option=:
 
 #+BEGIN_SRC scala
 trait Option[+A]
@@ -115,23 +138,35 @@ case class Some[A](a: A) extends Option[A]
 case object None extends Option[Nothing]
 #+END_SRC
 
-Haskell中定义一个ADT十分简单，不像Scala那么啰嗦。左边是类型构造器，右边有数据构造器，你会发现有一根竖线 =|= ， 它分隔着两个构造器
-- Just
-- Nothing
-其中 a （一定要小写）可以是任意类型
+Haskell 中定义一个 ADT 十分简单，不像 Scala 那么啰嗦。左边是类型构造器，右边有数据构造器，你会发现有一根竖线 =|= ， 它分隔着两个构造器
+- =Just=
+- =Nothing=
 
-所以 =Just 1= 会得到一个 =Num a => Mabye a= 类型（意思就是 =Maybe a= 但是 =a= 的类型约束为 =Num= ）， =Nothing= 也会得到一个 =Maybe a= 只不过 =a= 没有类型约束。
+其中 =a= [fn:3]表示是任意类型.
 
-总之我们有了构造器可以构造出 Maybe 类型，而这个类型能做的事情，就要取决它实现了哪些 class 的 instance 了。比如它可以是一个 Functor
+所以 =Just 1= 会得到一个 =Num a => Mabye a= 类型[fn:4]，
+=Nothing= 也会得到一个 =Maybe a= 只不过 =a= 没有类型约束。
+
+总之我们有了构造器可以构造出 =Maybe= 类型，而这个类型能做的事情，就要取决它实现了哪些 typeclass 的 instance 了。比如它可以是一个函子.
 #+BEGIN_SRC haskell
   instance Functor Maybe where
     fmap f (Just a) = Just (f a)
+    fmap f Nothing = Nothing
+#+END_SRC
+
+#+BEGIN_SRC scala
+  implicit val optionFunctor: Functor[Option] = new Functor[Option] {
+    def fmap[A, B](f: A => B): Option[A] => Option[B] = {
+      case Some(a) => Some(f(a))
+      case None => None
+    }
+  }
 #+END_SRC
 
 #+CAPTION: fmap :: (a -> b) -> f a -> f b
-[[file:images/p2-maybe-functor.png]]
+q[[file:images/p2-maybe-functor.png]]
 
-然后，还实现 Monad
+然后，还实现 Monad:
 #+BEGIN_SRC haskell
   instance Monad Maybe where
     return a = Just a
@@ -149,9 +184,13 @@ Maybe 有用在于能合适的处理 /{{{ruby(偏函数, Partial Function)}}}/ �
 [1,2,3] !! 4
 #+END_SRC
 
+#+BEGIN_SRC scala
+List(1,2,3).get(4)
+#+END_SRC
+
 如果使用 Maybe 把偏函数处理不了的输入都返回成 Nothing，这样结果依然保持 Maybe 类型，不影响后面的计算。
 
-** Either
+** Either 要么有要么有
 
 Either 的定义也很简单
 #+BEGIN_SRC haskell
@@ -185,7 +224,7 @@ class Endofunctor m => Monad m where
   eta :: a -> (m a)
   mu :: m m a -> m a
 #+END_SRC
-所以 m 必须是个 Endofunctor，也就是要满足Functor
+所以 m 必须是个 Endofunctor，也就是要满足 Functor
 #+BEGIN_SRC haskell
 class Functor t where
   fmap :: (a -> b) -> (t a -> t b)
@@ -205,7 +244,7 @@ t a 的 kind 是 *，所以 t 必须是 kind * -> *
 很明显的，>>= 任何函数到{{{ruby(左边, Left)}}} 都不会改变，只有 >>= 右边才能产生新的计算。
 
 
-** Reader
+** Reader 差一点就有
 Reader 的作用是给一个计算喂数据。
 
 在描述计算的时候，并不需要关心输入时什么，只需要 asks 就可以拿到输入值
@@ -287,7 +326,7 @@ instance Monad (Reader e) where
 #+END_SRC
 
 
-** Writer
+** Writer 光出进没有
 
 除了返回值，计算会需要产生一些额外的数据，比如 log
 
@@ -332,7 +371,7 @@ newtype Writer l a = Writer { runWriter :: (a,l) }
 所以在 >>= 时，我们先把 f a 返回的 Writer run了，然后把两次 log =mappend= 起来。
 [[file:images/p2-writer-monad-bind.png]]
 
-** State
+** State 变化会有
 跟名字就看得出来 State monad 是为了处理状态。虽然函数式编程不应该有状态，不然会引用透明性。但是，state monad并不是在计算过程中修改状态，而是通过描述这种变化，然后需要时在运行返回最终结果。这一点跟 Reader 和 Writer 这两个看起来是副作用的 IO 是一样的。
 
 先看下 State 类型的定义
@@ -374,7 +413,7 @@ x 类型是 =s -> (a, s)= ,所以 x s 之后会返回 结果和状态。也就�
 #+END_SRC
 
 
-** Validation
+** Validation 检查检查
 如果你有注意到，前面的 Either 可以用在处理错误和正确的路径分支，但是问题是错误只发生一次。
 
 #+BEGIN_QUOTE
@@ -480,7 +519,7 @@ createInfo "jichao" "12345678910" -- Success Info "jichao" "12345678910"
 createInfo "" "123" -- Failure ["name cannot be empty!", "phone's length is not 11"]
 #+END_SRC
 
-** Cont
+** Cont 接下来有
 Cont 是 {{{ruby(Continuation Passing Style,CPS)}}} 的 monad，也就是说，它是包含 cps 计算 monad。
 
 先看一下什么是 CPS，比如有一个加法
@@ -531,3 +570,15 @@ instance Monad (Cont r) where
 - 👉 [[./part3.org][第三部分：{{{ruby(搞基猫呢, Advanced Monads)}}}]]
 
 当然我又还没空全部写完，如果还有很多人{{{ruby(预定,只要998)}}} Gumroad 上的 @@html: <script src="https://gumroad.com/js/gumroad.js"></script><a class="gumroad-button" href="https://gum.co/grokking-monad" target="_blank">Grokking Monad</a>@@ 电子书的话，我可能会稍微写得快一些。毕竟，写了也没人感兴趣也怪浪费时间的。不过，我猜也没几个人能看到这一行，就当是我又自言自语吧，怎么又突然觉得自己好分裂，诶~，为什么我要说又？
+
+* Footnotes
+
+[fn:5] 从来没见过有人给这些数据类型按过中文名字, 不然我来, 这样也更好的体会这些数据类型的意图.
+
+[fn:4] 意思就是 =Maybe a= 但是 =a= 的类型约束为 =Num=
+
+[fn:3] 一定要记得小写哦
+
+[fn:2] 见 [[file:part1.org::*/Adjunction%20Functor/%20%E4%BC%B4%E9%9A%8F%E5%87%BD%E5%AD%90][第一部分 伴随函子]]
+
+[fn:1] 也就是 Kind * -> *, 因为它非常的 nice, 一定要等到 a 才出类型
