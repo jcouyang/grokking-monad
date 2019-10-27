@@ -6,8 +6,6 @@
 <<<<<<< HEAD
 #+description: 卷三 搞基猫呢
 #+index: Catergory Theory!范畴论完全装逼手册 卷三
-=======
->>>>>>> b7e8e0202ff09dcfa9a2614945aaf8a6131c64e7
 
 - [[./part1.org][第一部分：猫论]]
 - [[./part2.org][第二部分：食用猫呢]]
