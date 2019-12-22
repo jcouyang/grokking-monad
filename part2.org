@@ -164,14 +164,27 @@ Haskell 中定义一个 ADT 十分简单，不像 Scala 那么啰嗦。左边是
 #+END_SRC
 
 #+CAPTION: fmap :: (a -> b) -> f a -> f b
-q[[file:images/p2-maybe-functor.png]]
+[[file:images/p2-maybe-functor.png]]
 
-然后，还实现 Monad:
+看清楚了, 虚线箭头即 =fmap=, 图上表示的 =fmap= 是 =(a -> b) - - -> (Maybe a -> Maybe b)= 由于这里的箭头都是在 =->= 范畴, 所以 =- - ->= 就是 =->= 了.
+
+即: =fmap :: (a -> b) -> f a -> f b=
+
+不仅如此，还可以实现单子:
 #+BEGIN_SRC haskell
   instance Monad Maybe where
     return a = Just a
     (Just a) >>= f = f a
     Nothing >>= f = Nothing
+#+END_SRC
+
+#+BEGIN_SRC scala
+  implicit val optionMonad: Monad[Option] = new Monad[Option] {
+    def flatMap[A, B](f: A => Option[B]): Option[A] => Option[B] = {
+      case Some(a) => f(a)
+      case None => None
+    }
+  }
 #+END_SRC
 
 #+CAPTION: 还记得第一部分提到的 Kleisli 范畴吗？
@@ -196,6 +209,13 @@ Either 的定义也很简单
 #+BEGIN_SRC haskell
 data Either a b = Left a | Right b
 #+END_SRC
+
+#+BEGIN_SRC scala
+trait Either[+A, +B]
+case class Left[+A, +B](a: A) extends Either[A, B]
+case class Right[+A, +B](b: B) extends Either[A, B]
+#+END_SRC
+
 
 *** Product & Coproduct
 看过第一部分应该还能记得有一个东西叫 Duel，所以见到如果范畴上有 Coproduct 那么肯定在duel范畴上会有同样的东西叫 Product。
