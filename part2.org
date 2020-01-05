@@ -190,7 +190,8 @@ Haskell 中定义一个 ADT 十分简单，不像 Scala 那么啰嗦。左边是
 #+CAPTION: 还记得第一部分提到的 Kleisli 范畴吗？
 [[file:images/p2-maybe-kleisli.png]]
 
-Maybe 有用在于能合适的处理 /{{{ruby(偏函数, Partial Function)}}}/ 的返回值。偏函数相对于{{{ruby(全函数, Total Function)}}}，是指只能对部分输入返回输出的函数。
+Maybe 有用在于能合适的处理 /{{{ruby(偏函数, Partial Function)}}}/ 的返回值。
+偏函数相对于 /{{{ruby(全函数, Total Function)}}}/ 是指只能对部分输入返回输出的函数。
 
 比如一个取数组某一位上的值的函数，就是偏函数，因为假设你想取第4位的值，但不是所有数组长度都大于4，就会有获取不了的尴尬情况。
 #+BEGIN_SRC haskell
