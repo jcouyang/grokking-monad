@@ -21,7 +21,7 @@
 
 * 第二部分：{{{ruby(食用猫呢, Practical Monads)}}}
 
-https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Alice_through_the_looking_glass.jpg/761px-Alice_through_the_looking_glass.jpg
+[[./images/Alice_through_the_looking_glass.jpg]]
 
 #+BEGIN_QUOTE
 “If I had a world of my own, everything would be nonsense. 

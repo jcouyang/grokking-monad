@@ -20,7 +20,7 @@
 
 * 第一部分：{{{ruby(猫论,Catergory Theory)}}}
 
-https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/De_Alice%27s_Abenteuer_im_Wunderland_Carroll_pic_23_edited_1_of_2.png/1920px-De_Alice%27s_Abenteuer_im_Wunderland_Carroll_pic_23_edited_1_of_2.png [fn:1]
+[[./images/Cheshire_Cat.png]] [fn:1]
 
 #+BEGIN_QUOTE
 `But I don’t want to go among mad people,’ Alice remarked.
