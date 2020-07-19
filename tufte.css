@@ -1,0 +1,121 @@
+@charset "UTF-8";
+
+pre.sourceCode {
+    position: relative;
+    overflow: visible;
+    margin-top: 1.2em;
+    font-size: 0.9rem;
+    width: 90%;
+    padding-left: 2.5%;
+    border-left: medium solid #ededed;
+}
+pre.sourceCode:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -18px;
+    left: 0px;
+    padding: 3px;
+    font-style: italic;
+}
+pre.sourceCode:hover:before { display: inline;}
+
+/* Languages Color */
+pre.sourceCode.haskell {border-left-color: #5e5086;}
+pre.sourceCode.scala {border-left-color: #c22d40;}
+pre.sourceCode.purescript {border-left-color: #1d222d;}
+pre.sourceCode.js {border-left-color: #f1e05a;}
+
+/* Languages per Org manual */
+pre.sourceCode.asymptote:before { content: 'Asymptote'; }
+pre.sourceCode.awk:before { content: 'Awk'; }
+pre.sourceCode.C:before { content: 'C'; }
+/* pre.sourceCode.C++ doesn't work in CSS */
+pre.sourceCode.clojure:before { content: 'Clojure'; }
+pre.sourceCode.css:before { content: 'CSS'; }
+pre.sourceCode.D:before { content: 'D'; }
+pre.sourceCode.ditaa:before { content: 'ditaa'; }
+pre.sourceCode.dot:before { content: 'Graphviz'; }
+pre.sourceCode.calc:before { content: 'Emacs Calc'; }
+pre.sourceCode.emacs-lisp:before { content: 'Emacs Lisp'; }
+pre.sourceCode.fortran:before { content: 'Fortran'; }
+pre.sourceCode.gnuplot:before { content: 'gnuplot'; }
+pre.sourceCode.haskell:before { content: 'Haskell'; }
+pre.sourceCode.hledger:before { content: 'hledger'; }
+pre.sourceCode.java:before { content: 'Java'; }
+pre.sourceCode.js:before { content: 'Javascript'; }
+pre.sourceCode.latex:before { content: 'LaTeX'; }
+pre.sourceCode.ledger:before { content: 'Ledger'; }
+pre.sourceCode.lisp:before { content: 'Lisp'; }
+pre.sourceCode.lilypond:before { content: 'Lilypond'; }
+pre.sourceCode.lua:before { content: 'Lua'; }
+pre.sourceCode.matlab:before { content: 'MATLAB'; }
+pre.sourceCode.mscgen:before { content: 'Mscgen'; }
+pre.sourceCode.ocaml:before { content: 'Objective Caml'; }
+pre.sourceCode.octave:before { content: 'Octave'; }
+pre.sourceCode.org:before { content: 'Org mode'; }
+pre.sourceCode.oz:before { content: 'OZ'; }
+pre.sourceCode.plantuml:before { content: 'Plantuml'; }
+pre.sourceCode.processing:before { content: 'Processing.js'; }
+pre.sourceCode.python:before { content: 'Python'; }
+pre.sourceCode.R:before { content: 'R'; }
+pre.sourceCode.ruby:before { content: 'Ruby'; }
+pre.sourceCode.sass:before { content: 'Sass'; }
+pre.sourceCode.scheme:before { content: 'Scheme'; }
+pre.sourceCode.screen:before { content: 'Gnu Screen'; }
+pre.sourceCode.sed:before { content: 'Sed'; }
+pre.sourceCode.sh:before { content: 'shell'; }
+pre.sourceCode.sql:before { content: 'SQL'; }
+pre.sourceCode.sqlite:before { content: 'SQLite'; }
+/* additional languages in org.el's org-babel-load-languages alist */
+pre.sourceCode.forth:before { content: 'Forth'; }
+pre.sourceCode.io:before { content: 'IO'; }
+pre.sourceCode.J:before { content: 'J'; }
+pre.sourceCode.makefile:before { content: 'Makefile'; }
+pre.sourceCode.maxima:before { content: 'Maxima'; }
+pre.sourceCode.perl:before { content: 'Perl'; }
+pre.sourceCode.picolisp:before { content: 'Pico Lisp'; }
+pre.sourceCode.scala:before { content: 'Scala'; }
+pre.sourceCode.shell:before { content: 'Shell Script'; }
+pre.sourceCode.ebnf2ps:before { content: 'ebfn2ps'; }
+/* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+pre.sourceCode.cpp:before  { content: 'C++'; }
+pre.sourceCode.abc:before  { content: 'ABC'; }
+pre.sourceCode.coq:before  { content: 'Coq'; }
+pre.sourceCode.groovy:before  { content: 'Groovy'; }
+/* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+pre.sourceCode.bash:before  { content: 'bash'; }
+pre.sourceCode.csh:before  { content: 'csh'; }
+pre.sourceCode.ash:before  { content: 'ash'; }
+pre.sourceCode.dash:before  { content: 'dash'; }
+pre.sourceCode.ksh:before  { content: 'ksh'; }
+pre.sourceCode.mksh:before  { content: 'mksh'; }
+pre.sourceCode.posh:before  { content: 'posh'; }
+/* Additional Emacs modes also supported by the LaTeX listings package */
+pre.sourceCode.ada:before { content: 'Ada'; }
+pre.sourceCode.asm:before { content: 'Assembler'; }
+pre.sourceCode.caml:before { content: 'Caml'; }
+pre.sourceCode.delphi:before { content: 'Delphi'; }
+pre.sourceCode.html:before { content: 'HTML'; }
+pre.sourceCode.idl:before { content: 'IDL'; }
+pre.sourceCode.mercury:before { content: 'Mercury'; }
+pre.sourceCode.metapost:before { content: 'MetaPost'; }
+pre.sourceCode.modula-2:before { content: 'Modula-2'; }
+pre.sourceCode.pascal:before { content: 'Pascal'; }
+pre.sourceCode.ps:before { content: 'PostScript'; }
+pre.sourceCode.prolog:before { content: 'Prolog'; }
+pre.sourceCode.simula:before { content: 'Simula'; }
+pre.sourceCode.tcl:before { content: 'tcl'; }
+pre.sourceCode.tex:before { content: 'TeX'; }
+pre.sourceCode.plain-tex:before { content: 'Plain TeX'; }
+pre.sourceCode.verilog:before { content: 'Verilog'; }
+pre.sourceCode.vhdl:before { content: 'VHDL'; }
+pre.sourceCode.xml:before { content: 'XML'; }
+pre.sourceCode.nxml:before { content: 'XML'; }
+/* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+pre.sourceCode.conf:before { content: 'Configuration File'; }
+pre.sourceCode.purescript:before { content: 'PureScript'; }

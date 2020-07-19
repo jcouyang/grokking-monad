@@ -1,15 +1,3 @@
-#+TITLE: 范畴论完全装逼手册 / Grokking Monad
-#+Date: <2017-02-10 Fri>
-#+AUTHOR: 欧阳继超
-#+OPTIONS: ^:t
-#+MACRO: ruby @@html:<ruby>$1<rt>$2</rt></ruby>@@
-#+PROPERTY: header-args :eval never-export
-#+description: 卷一 猫论
-#+index: Catergory Theory!范畴论完全装逼手册 卷一
-
-- *[[./part1.org][第一部分：猫论]]* 👈
-- [[./part2.org][第二部分：食用猫呢]]
-- [[./part3.org][第三部分：搞基猫呢]]
 * COMMENT
 #+BEGIN_SRC emacs-lisp
 (require 'ob-dot)
@@ -73,7 +61,7 @@ Alice didn’t think that proved it at all; however, she went on `And how do you
 
 恩, 就是这么简单!
 
-#+BEGIN_SRC dot :file images/category.svg :exports results
+#+BEGIN_SRC dot :file images/category.png :exports results
   digraph {
           label="Category"
           rankdir=RL
@@ -88,7 +76,7 @@ Alice didn’t think that proved it at all; however, she went on `And how do you
 
 #+CAPTION: 有东西 a, b, c 和箭头 f, g 的 Category，其中 f . g 表示 compose f 和 g
 #+RESULTS:
-[[file:images/category.svg]]
+[[file:images/category.png]]
 
 
 #+BEGIN_QUOTE
@@ -179,7 +167,7 @@ A => A
 #+INDEX: 函子
 两个范畴中间可以用叫 Functor 的东西来连接起来，简称 T。
 
-#+BEGIN_SRC dot :file images/functor.svg :exports results
+#+BEGIN_SRC dot :file images/functor.png :exports results
   digraph {
 
   label="Functor C D T"
@@ -208,7 +196,7 @@ A => A
 
 #+CAPTION: Functor C D T, 从 C 到 D 范畴的Functor T
 #+RESULTS:
-[[file:images/functor.svg]]
+[[file:images/functor.png]]
 
 所以大部分把 Functor/Monad 比喻成盒子其实在定义上是错的，虽然这样比喻比较容易理解，在使用上问题也不大。但是，Functor 只是从一个范畴到另一个范畴的映射关系而已。
 
@@ -278,7 +266,7 @@ Functor 是范畴间的映射，所以在这个 Cat 范畴中, 把范畴看成�
 #+INDEX: Natural Transformations
 #+INDEX: 自然变换
 
-#+BEGIN_SRC dot :file images/natrual-transformation.svg :exports results
+#+BEGIN_SRC dot :file images/natrual-transformation.png :exports results
   digraph {
   label="Functor F 到 G 的自然变换"
   compound=true;
@@ -319,9 +307,9 @@ Functor 是范畴间的映射，所以在这个 Cat 范畴中, 把范畴看成�
   }
 #+END_SRC
 
-#+CAPTION: Functor F和G，以及 F 到 G 的自然变化 \eta
 #+RESULTS:
-[[file:images/natrual-transformation.svg]]
+[[file:images/natrual-transformation.png]]
+#+CAPTION: Functor F和G，以及 F 到 G 的自然变化 eta
 
 而 Functor 间也有映射，叫做 +喵的变换+ /自然变换/
 
@@ -361,7 +349,7 @@ trait NatHask[F[_], G[_]] {
 - id 为 f a 到 f a 的自然变换
 - 自然变换的组合
 
-#+BEGIN_SRC dot :file images/functor-category.svg :exports results
+#+BEGIN_SRC dot :file images/functor-category.png :exports results
 digraph FunctorCategory {
           style=dotted
           label="Functor Category"
@@ -373,7 +361,7 @@ functorF -> functorG[label="η"]
 #+END_SRC
 
 #+RESULTS:
-[[file:images/functor-category.svg]]
+[[file:images/functor-category.png]]
 
 别着急, 我们来梳理一下，如果已经不知道升了几个维度了，我们假设类型所在范畴是第一维度
 - 一维： Hask， 东西是类型，箭头是 ->
@@ -423,12 +411,12 @@ f':: b -> a
 
 伴随函子的 FG 组合是 C 范畴的 id 函子 F . G = 1_c
 
-#+CAPTION: 伴随函子的两个Functor组合, 左侧为 F \eta, 右侧为 \epsilon F
+#+CAPTION: 伴随函子的两个Functor组合, 左侧为 F eta, 右侧为 epsilon F
 [[file:images/p1-ajunction-functor-compose.png]]
 
 Functor 不仅横着可以组合，竖着(自然变换维度)也是可以组合的，因为自然变换是 Functor 范畴的箭头。
 
-#+CAPTION: F \eta . \epsilon F  = F
+#+CAPTION: F eta . epsilon F  = F
 [[file:images/p1-ajunction-functor-compose-nat.png]]
 
 当到组合 F \eta . \epsilon F 得到一个弯弯曲曲的 F 时，我们可以拽着F的两段一拉，就得到了直的 F。
@@ -470,11 +458,11 @@ class Endofunctor m => Monad m where
   }
 #+END_SRC
 要推出单子的 \eta 变换，只需要让 FG = T
-#+CAPTION: 伴随函子的 \epsilon 就是单子的 \eta
+#+CAPTION: 伴随函子的 epsilon 就是单子的 eta
 [[file:images/p1-ajunction-functor-to-monad-eta.png]]
 
 同样的，当 FG = T, F \eta G 就可以变成 \mu
-#+CAPTION: 伴随函子的 F \eta G 是函子的 \mu
+#+CAPTION: 伴随函子的 F eta G 是函子的 mu
 [[file:images/p1-ajunction-functor-to-monad-mu.png]]
 
 *** 三角等式
@@ -482,9 +470,9 @@ class Endofunctor m => Monad m where
 三角等式是指 \mu . T \eta = T = \mu . \eta T
 
 要推出三角等式只需要组合 F \eta G 和 \epsilon F G
-#+CAPTION: F \eta G  . \epsilon F G = F G
+#+CAPTION: F eta G  . epsilon F G = F G
 [[file:images/p1-adjunction-functor-triangle.png]]
-#+CAPTION: F \eta G  . \epsilon F G= F G 对应到Monad就是 \mu . \eta T = T
+#+CAPTION: F eta G  . epsilon F G= F G 对应到Monad就是 mu . eta T = T
 [[file:images/p1-monad-triangle.png]]
 
 换到代码上来说
@@ -494,9 +482,9 @@ class Endofunctor m => Monad m where
 
 同样的，左右翻转也成立
 
-#+CAPTION: F \eta G . F G \epsilon = F G
+#+CAPTION: F eta G . F G epsilon = F G
 [[file:images/p1-adjunction-functor-triangle-reverse.png]]
-#+CAPTION: F \eta G . F G \epsilon = F G 对应到 Monad是 \mu . T \eta = T
+#+CAPTION: F eta G . F G epsilon = F G 对应到 Monad是 mu . T eta = T
 [[file:images/p1-monad-triangle-reverse.png]]
 T \eta 就是 fmap eta
 #+BEGIN_SRC haskell
@@ -567,7 +555,7 @@ embed 可以把 functor =f a= 变成 =(a -> b) -> f b=
 unembed 是反过来， =(a -> b) -> f b= 变成 =f a=
 
 上个图就明白了
-#+BEGIN_SRC dot :file images/yoneda-lemma.svg  :exports results
+#+BEGIN_SRC dot :file images/yoneda-lemma.png  :exports results
     digraph {
             rankdir=RL
             newrank=true;
@@ -598,7 +586,7 @@ unembed 是反过来， =(a -> b) -> f b= 变成 =f a=
 
 #+CAPTION: 也就是说，图中无论知道a->b 再加上任意一个 F x，都能推出另外一个 F
 #+RESULTS:
-[[file:images/yoneda-lemma.svg]]
+[[file:images/yoneda-lemma.png]]
 
 *** Rank N Type
 #+INDEX: Arbitrary-rank polymorphism
@@ -658,7 +646,7 @@ f 在 =f True= 是确定 a 是 Boolean，在rank1多态是时就确定了 =a->a=
 ** /Kleisli Catergory/
 #+INDEX: Kleisi Catergory
 
-#+BEGIN_SRC dot :file images/kleisli.svg :exports results
+#+BEGIN_SRC dot :file images/kleisli.png :exports results
       digraph g {
               rankdir="RL";
               edge[style=invis];
@@ -709,9 +697,9 @@ f 在 =f True= 是确定 a 是 Boolean，在rank1多态是时就确定了 =a->a=
       }
 #+END_SRC
 
-#+CAPTION: 注意观察大火箭 <=< 的轨迹（不知道dot为什么会把这根线搞这么又弯又骚的） 和 >>= 。所以 Kleisli 其实就是斜着走的一个范畴，但是 >>= 把它硬生生掰 +弯+ 直了。
+#+CAPTION: 注意观察大火箭 <=< 的轨迹, 不知道dot为什么会把这根线搞这么又弯又骚的, 和 >>= 。所以 Kleisli 其实就是斜着走的一个范畴，但是 >>= 把它硬生生掰 +弯+ 直了。
 #+RESULTS:
-[[file:images/kleisli.svg]]
+[[file:images/kleisli.png]]
 
 {{{ruby(函子,Functor)}}} 的范畴叫做 {{{ruby(函子范畴,Functor Catergory)}}}, 自然变换是其箭头。那{{{ruby(单子,Monad)}}}也可以定义一个范畴吗?[fn:8]
 

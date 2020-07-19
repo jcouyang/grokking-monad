@@ -1,15 +1,3 @@
-#+TITLE: 范畴论完全装逼手册 / Grokking Monad
-#+Date: <2017-02-10 Fri>
-#+AUTHOR: 欧阳继超
-#+OPTIONS: ^:t
-#+MACRO: ruby @@html:<ruby>$1<rt>$2</rt></ruby>@@
-#+description: 卷二 食用猫呢
-#+index: Catergory Theory!范畴论完全装逼手册 卷二
-
-- [[./part1.org][第一部分：范畴论]]
-- *[[./part2.org][第二部分：食用猫呢]]* 👈
-- [[./part3.org][第三部分：搞基猫呢]]
-
 * COMMENT
 #+BEGIN_SRC emacs-lisp
 (require 'ob-haskell)
@@ -43,9 +31,9 @@ And contrary wise, what is, it wouldn't be. And what it wouldn't be, it would. Y
 *** Arrow
 *** Bifunctor
 
-** Identity 本身就有[fn:5]
+** Identity 本身就有
 
-{{{ruby(本身就有单子, Identity Monad)}}} 可能是最简单的单子了。本身不包含任何计算, 且只有一个构造器:
+{{{ruby(本身就有单子, Identity Monad)}}}[fn:5] 可能是最简单的单子了。本身不包含任何计算, 且只有一个构造器:
 #+BEGIN_SRC haskell :session part2
 newtype Identity a = Identity { runIdentity :: a }
 #+END_SRC

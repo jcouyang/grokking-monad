@@ -1,0 +1,22 @@
+#+TITLE: Grokking Monad
+#+Date: <2017-02-10 Fri>
+#+AUTHOR: 欧阳继超
+#+LATEX_CLASS: book
+#+LATEX_HEADER: \usepackage{ucs}
+#+LATEX_HEADER: \usepackage{xeCJK}
+#+LATEX_HEADER: \setCJKmainfont{STXihei}
+#+LATEX_HEADER:   \setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+#+LATEX_HEADER:   \graphicspath{{graphics/}} % set of paths to search for images
+#+LATEX_HEADER: \usepackage{booktabs} % book-quality tables
+#+LATEX_HEADER: \usepackage{units}    % non-stacked fractions and better unit spacing
+#+LATEX_HEADER: \usepackage{multicol} % multiple column layout facilities
+#+LATEX_HEADER: \usepackage{lipsum}   % filler text
+#+LATEX_HEADER: \usepackage{fancyvrb} % extended verbatim environments
+#+LATEX_HEADER:   \fvset{fontsize=\normalsize}% default font size for fancy-verbatim environments
+#+OPTIONS: ^:t todo:nil toc:t num:3
+#+MACRO: ruby $1/$2
+#+EXPORT_FILE_NAME: grokking-monad-zh.org
+
+#+INCLUDE: "./part1.org"
+#+INCLUDE: "./part2.org"
+#+INCLUDE: "./part3.org"

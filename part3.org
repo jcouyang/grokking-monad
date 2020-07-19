@@ -1,15 +1,3 @@
-#+TITLE: 范畴论完全装逼手册 / Grokking Monad
-#+Date: <2018-07-28 Fri>
-#+AUTHOR: 欧阳继超
-#+OPTIONS: ^:t
-#+MACRO: ruby @@html:<ruby>$1<rt>$2</rt></ruby>@@
-#+description: 卷三 搞基猫呢
-#+index: Catergory Theory!范畴论完全装逼手册 卷三
-
-- [[./part1.org][第一部分：猫论]]
-- [[./part2.org][第二部分：食用猫呢]]
-- [[./part3.org][*第三部分：搞基猫呢*]] 👈
-
 * COMMENT
 #+BEGIN_SRC emacs-lisp
 (require 'ob-haskell)
