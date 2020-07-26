@@ -254,11 +254,11 @@ class Functor t where
 
 这里的 fmap 就是 T(~>)，在 Hask 范畴上，所以是 T(->), 这个箭头是函数，所以也能表示成 T(f) 如果 =f:: a -> b=
 
-** TODO /{{{ruby(Cat, +猫+)}}}/
+** TODO {{{ruby(Cat,猫)}}}
 
 递归的, 当我们可以把一个 Category 看成一个 object，functor 看成箭头，那么我们又得到了一个 Category，这种 object 是 category 的 category 我们叫它 -- /Cat/
 
-已经{{{ruby(没, meow)}}}的办法用语言描述这么高维度的事情了，看图吧...
+已经{{{ruby(没,meow)}}}的办法用语言描述这么高维度的事情了，看图吧...
 
 ** 自然变换 / Natural Transformations <<NT>>
 
@@ -268,7 +268,6 @@ Functor 是范畴间的映射，所以在这个 Cat 范畴中, 把范畴看成�
 
 #+BEGIN_SRC dot :file images/natrual-transformation.png :exports results
   digraph {
-  label="Functor F 到 G 的自然变换"
   compound=true;
   rankdir=RL
   subgraph cluster_C {
@@ -307,9 +306,10 @@ Functor 是范畴间的映射，所以在这个 Cat 范畴中, 把范畴看成�
   }
 #+END_SRC
 
+#+CAPTION[Functor G \eta]: Functor F 和 G 以及 F 到 G 的自然变化
 #+RESULTS:
 [[file:images/natrual-transformation.png]]
-#+CAPTION: Functor F和G，以及 F 到 G 的自然变化 eta
+
 
 而 Functor 间也有映射，叫做 +喵的变换+ /自然变换/
 

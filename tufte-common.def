@@ -276,14 +276,14 @@
 % Detect if we're using XeLaTeX
 
 \newboolean{@tufte@xetex}
-\IfFileExists{ifxetex.sty}{%
-  \RequirePackage{ifxetex}
-  \ifthenelse{\boolean{xetex}}
+%% \IfFileExists{ifxetex.sty}{%
+  %% \RequirePackage{ifxetex}
+  %% \ifthenelse{\boolean{xetex}}
     {\setboolean{@tufte@xetex}{true}}
-    {\setboolean{@tufte@xetex}{false}}
-}{% not using xelatex
-  \setboolean{@tufte@xetex}{false}
-}
+    %% {\setboolean{@tufte@xetex}{false}}
+%% }{% not using xelatex
+  %% \setboolean{@tufte@xetex}{false}
+%% }
 
 \ifthenelse{\boolean{@tufte@xetex}}{%
   \RequirePackage{xltxtra}% xltxtra loads xunicode and fontspec; must be loaded before bidi
@@ -719,22 +719,22 @@
   \renewcommand{\textsc}[1]{\smallcapsspacing{\textsmallcaps{##1}}}%
 }
 
-\ifthenelse{\boolean{@tufte@letterspace}}{%
-  \ifthenelse{\boolean{@tufte@pdf}\AND\boolean{@tufte@letterspace@pkg@prereqs}\AND\NOT\boolean{@tufte@xetex}}{%
+%% \ifthenelse{\boolean{@tufte@letterspace}}{%
+  %% \ifthenelse{\boolean{@tufte@pdf}\AND\boolean{@tufte@letterspace@pkg@prereqs}\AND\NOT\boolean{@tufte@xetex}}{%
     % load letterspace pkg
-    \IfFileExists{letterspace.sty}{%
+    %% \IfFileExists{letterspace.sty}{%
       \@tufte@letterspacing@letterspace
-    }{}%
-  }{}%
+    %% }{}%
+  %% }{}%
   % load soul pkg
-  \@ifpackageloaded{letterspace}{}{%
-    \IfFileExists{soul.sty}{%
-      \@tufte@letterspacing@soul
-    }{%
-      \@tufte@warning@noline{Couldn't locate `soul' package}%
-    }% soul not installed... giving up.
-  }%
-}{}
+  %% \@ifpackageloaded{letterspace}{}{%
+    %% \IfFileExists{soul.sty}{%
+      %% \@tufte@letterspacing@soul
+    %% }{%
+      %% \@tufte@warning@noline{Couldn't locate `soul' package}%
+    %% }% soul not installed... giving up.
+  %% }%
+%% }{}
 
 %\ifthenelse{\boolean{@tufte@letterspace}}{%
   %\ifthenelse{\boolean{pdf}}{%

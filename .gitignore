@@ -76,3 +76,7 @@ book/images
 *.epub
 *.pdf
 *.mobi
+*.aux
+*.out
+*.toc
+.DS_Store
