@@ -6,7 +6,7 @@
 #+RESULTS:
 : ob-dot
 
-* 第一部分：{{{ruby(猫论,Catergory Theory)}}}
+* {{{ruby(猫论,Catergory Theory)}}}
 
 [[./images/Cheshire_Cat.png]] [fn:1]
 
@@ -23,6 +23,7 @@ Alice didn’t think that proved it at all; however, she went on `And how do you
     -- Alice's Adventures in Wonderland
 #+END_QUOTE
 
+#+begin_quote
 {{{ruby(单子,Monad)}}}是什么? 你也不懂, 我也不懂, 我们都不懂.
 
 话说, 我又怎么知道你不懂呢?
@@ -34,28 +35,21 @@ Alice didn’t think that proved it at all; however, she went on `And how do you
 因为, 我知道懂的人什么样子. 显然, 我不是.
 
 懂的人一定知道{{{ruby(猫论, Category Theory)}}}.
+#+end_quote
 
-懂猫论的人又不一定知道编程. 但是懂编程的人可以略懂猫论.
+这一部分主要是纯理论，这里面有很多很装的单词，比如 Monad，它们都是 /斜体/ ，就算一遍没看懂[fn:13]，把这些词背下来也足够装好长一阵子逼了。
 
-编程是项技术, 即理论的降维. 所以要降低门槛, 比如我在书中也[[https://book.douban.com/subject/26883736/][写过一章]]用JavaScript来解释，某人也尝试过[[http://www.ruanyifeng.com/blog/2017/02/fp-tutorial.html][写博客解释]]，[fn:2]没想到那些也不知道会不会 Haskell/Scala 的人就跑出来喷你们前端[fn:3]这些不懂函数式的渣渣乱搞出来的东西根本就不是单子。
+这里还有很多代码, 它们都成对出现, 通常第一段是 Haskell, 第二段是 Scala 3.
 
-我也画过一些图来解释，又会被嫌弃画风不好。但是，作为灵魂画师，我只 +是觉得自己萌萌的啊+ 在乎画的灵魂是否能够给你一点启发。好吧，讲这么学术的东西，还是用dot来画吧，看起来好正规呢。
-
-好了，安全带系好，我真的要开车了。为了防止{{{ruby(解释的不到位,又被喷)}}}，就用 Haskell/Scala 好了[fn:4]，其实也不难解释清楚 +才怪+ 。
-
-这里面很多很装逼的单词，它们都是 /斜体/ ，就算没看懂，把这些词背下来也足够{{{ruby(装好一阵子逼了,买一阵子萌了)}}}。
-
-这里还有很多代码, 它们都成对出现, 第一段是 Haskell, 第二段是 Scala.
-
-** /Category/
+** {{{ruby(范畴,Category)}}}
 #+INDEX: Catergory
 #+INDEX: 范畴
 
-一个 /{{{ruby(范畴,Category)}}}/ 包含两个玩意
+一个 /{{{ruby(范畴,Category)}}}/ 包含两个玩意:
 - 东西 =O= （Object）
 - 两个东西的关系，箭头 =~>= （ /{{{ruby(态射,Morphism)}}}/ ）
 
-还必须带上一些属性: 
+还必须带上一些属性:
 - 一定有一个叫 id 的箭头，也叫做 1
 - 箭头可以 /{{{ruby(组合, compose)}}}/
 
@@ -85,22 +79,14 @@ Alice didn’t think that proved it at all; however, she went on `And how do you
 
 这些玩意对应到 haskell 的 typeclass 大致就是这样:
 
+#+caption: Category definition in Haskell
 #+BEGIN_SRC haskell
 class Category (c :: * -> * -> *) where
   id :: c a a
   (.) :: c y z -> c x y -> c x z
 #+END_SRC
 
-
-而 Scala 可以用 trait 来表示这个 typeclass:
-#+BEGIN_SRC scala
-  trait Category[C[_, _]] {
-    val id[A]: C[A, A]
-    def <<<(a: C[Y, Z], b: C[X, Y]): C[X, Z] 
-  }
-#+END_SRC
-
-如果这是你第一次见到 Haskell 代码，没有关系，语法真的很简单 +才怪+
+如果这是你第一次见到 Haskell 代码，没有关系，语法真的很简单：
 - =class= 定义了一个 TypeClass， =Category= 是这个 TypeClass 的名字
 - Type class 类似于定义类型的规范，规范为 =where= 后面那一坨
 - 类型规范的对象是参数 ~(c:: * -> * -> *)~ ， =::= 后面是c的类型
@@ -109,20 +95,35 @@ class Category (c :: * -> * -> *) where
 - ~id:: c a a~ 表示 c 范畴上的 a 到 a 的箭头
 - =.= 的意思 c 范畴上，如果喂一个 y 到 z 的箭头，再喂一个 x 到 y 的箭头，那么就返回 x 到 z 的箭头。
 
+而 Scala 可以用 trait 来表示这个 typeclass:
+#+caption: Category definition in Scala
+#+BEGIN_SRC scala
+  trait Category[C[_, _]] {
+    def id[A]: C[A, A]
+    def <<<(a: C[Y, Z], b: C[X, Y]): C[X, Z] 
+  }
+#+END_SRC
+
+如果这是你第一次见到 Scala 代码，没关系，从Haskell可以飞快的切换过来：
+- =class= -> =trait=
+- =c :: * -> * -> *= -> =C[_, _]=
+- =::= -> =:=
+- 函数名前加 =def=
+
 另外 compose 在 haskell 中直接是句号 =.=
 
-scala 中用 =<<<= 或者 =compose=
+scala 中用习惯用 =<<<= 或者 =compose=
 
-总之, 用文字再读一遍上面这些代码就了然了.
+总之，我们来用文字再读一遍上面这些代码就了然了.
 
-范畴 C 其实就包含
+范畴 C 其实就包含：
 1. 返回 A 对象到 A 对象的 id 箭头
 2. 可以组合 Y 对象到 Z 对象 和 X 对象到 Y 对象的箭头 compose
 
-{{{ruby(简单吧,hen nan ba)}}}?还没有高数抽象呢。
+简单吧？还没有高数抽象呢。
 
 *** /Hask/
-Haskell 类型系统范畴叫做 Hask
+Haskell 类型系统范畴叫做 Hask。
 #+INDEX: Hask
 
 在 Hask 范畴上：
@@ -135,15 +136,16 @@ Haskell 类型系统范畴叫做 Hask
 #+BEGIN_SRC haskell
 type Hask = (->)
 instance Category (Hask:: * -> * -> *) where
+  id a = a
   (f . g) x = f (g x)
 #+END_SRC
 
 我们看见新的关键字 =instance= ，这表示 Hask 是 Type class Category 的实例类型，也就是说对任意Hask类型, 那么就能找到它的 id 和 compose
 
 #+BEGIN_SRC scala
-  implicit val haskCat: Category[Hask[_, _]] = new Category[Hask] {
-    val id[A] = identity[A]
-    def <<<[X, Y, Z](a: Hask[Y, Z], b: Hask[X, Y]) = a compose b
+  given Category[=>[_, _]] {
+    def id[A]: A => A = identity[A]
+    def <<<[X, Y, Z](a: Y => Z, b: X => Y) = a compose b
   }
 #+END_SRC
 
@@ -758,17 +760,7 @@ def <=<[T[_], A, B, C](f: B => T[C])(g: A => T[B]): A => T[C] =
 
 * Footnotes
 
-[fn:12] 即 =fmap f=
-
-[fn:11] (敲黑板) 就是紫色那根嘛!
-
-[fn:10] 这个是我瞎翻译的, 但是读出来就是这么个意思, 真的, 不骗你, 照这么读绝对装的一手好逼, 不会被嘲笑的
-
-[fn:9] 怎么说也是函数式编程的核心,怎么可以叫的这么low这么直接
-
-[fn:8] 当然, 单子是自函子，所以也可以是自函子范畴
-
-[fn:7] 也就不是不变态
+[fn:13] 可以继续看第二部分，看完概念是如何在现实中实现的，再回来看一遍，会感觉好很多。
 
 [fn:1] https://en.wikipedia.org/wiki/Cheshire_Cat
 
@@ -781,4 +773,16 @@ def <=<[T[_], A, B, C](f: B => T[C])(g: A => T[B]): A => T[C] =
 [fn:5] 这里可以把 Functor 的第一第二个参数消掉, 因为已经知道是在 Hask 范畴了
 
 [fn:6] 别急, 后面马上讲到
+
+[fn:7] 也就不是不变态
+
+[fn:8] 当然, 单子是自函子，所以也可以是自函子范畴
+
+[fn:9] 怎么说也是函数式编程的核心,怎么可以叫的这么low这么直接
+
+[fn:10] 这个是我瞎翻译的, 但是读出来就是这么个意思, 真的, 不骗你, 照这么读绝对装的一手好逼, 不会被嘲笑的
+
+[fn:11] (敲黑板) 就是紫色那根嘛!
+
+[fn:12] 即 =fmap f=
 

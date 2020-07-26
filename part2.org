@@ -7,7 +7,7 @@
 : ob-haskell
 
 
-* 第二部分：{{{ruby(食用猫呢, Practical Monads)}}}
+* {{{ruby(食用猫呢,Practical Monads)}}}
 
 [[./images/Alice_through_the_looking_glass.jpg]]
 

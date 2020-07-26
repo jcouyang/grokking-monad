@@ -1,22 +1,41 @@
 #+TITLE: Grokking Monad
+#+SUBTITLE: 函数式装逼手册
 #+Date: <2017-02-10 Fri>
 #+AUTHOR: 欧阳继超
-#+LATEX_CLASS: book
+#+LATEX_COMPILER: xelatex
+#+LATEX_CLASS: tufte
+#+LATEX_CLASS_OPTIONS: [letterspacing]
 #+LATEX_HEADER: \usepackage{ucs}
 #+LATEX_HEADER: \usepackage{xeCJK}
 #+LATEX_HEADER: \setCJKmainfont{STXihei}
 #+LATEX_HEADER:   \setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
-#+LATEX_HEADER:   \graphicspath{{graphics/}} % set of paths to search for images
 #+LATEX_HEADER: \usepackage{booktabs} % book-quality tables
 #+LATEX_HEADER: \usepackage{units}    % non-stacked fractions and better unit spacing
 #+LATEX_HEADER: \usepackage{multicol} % multiple column layout facilities
-#+LATEX_HEADER: \usepackage{lipsum}   % filler text
 #+LATEX_HEADER: \usepackage{fancyvrb} % extended verbatim environments
 #+LATEX_HEADER:   \fvset{fontsize=\normalsize}% default font size for fancy-verbatim environments
+#+LATEX_HEADER: \usepackage{listings}
+#+LATEX_HEADER: \lstset{basicstyle=\ttfamily\normalsize,breaklines=false,frame=l}
 #+OPTIONS: ^:t todo:nil toc:t num:3
 #+MACRO: ruby $1/$2
 #+EXPORT_FILE_NAME: grokking-monad-zh.org
+#+BEGIN_EXPORT latex
+\newpage
+\begin{fullwidth}
+~\vfill
+\thispagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{\baselineskip}
+Copyright \copyright\ 2015-\the\year\ Jichao Ouyang
 
+\par\url{github.com/jcouyang/grokking-monad}
+
+\par\textit{First printing, 2020}
+\end{fullwidth}
+#+END_EXPORT
+
+#+LATEX: \chapter*{前言}
+#+INCLUDE: "./preface.org"
 #+INCLUDE: "./part1.org"
 #+INCLUDE: "./part2.org"
 #+INCLUDE: "./part3.org"

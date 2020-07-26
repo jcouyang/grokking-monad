@@ -6,7 +6,7 @@
 #+RESULTS:
 : ob-haskell
 
-* 第三部分:{{{ruby(搞基猫呢,Advanced Monads)}}}
+* {{{ruby(搞基猫呢,Advanced Monads)}}}
 第二部分介绍了一些实用的monad instances，这些 monad 都通过同样的抽象方式，解决了分离计算与副作用的工作。
 
 通过它们可以解决大多数的基本问题，但是正对于复杂业务逻辑，我们可能还需要一些更高阶的 monad 或者 pattern。
