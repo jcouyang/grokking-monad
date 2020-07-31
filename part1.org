@@ -32,18 +32,24 @@ Alice didn’t think that proved it at all; however, she went on `And how do you
 
 我又是怎么知道自己不懂呢?
 
-因为, 我知道懂的人什么样子. 显然, 我不是.
+因为，我知道懂的人是什么样子. 显然, 我不是.
 
-懂的人一定知道{{{ruby(猫论, Category Theory)}}}.
+因为，懂的人一定知道{{{ruby(猫论,Category Theory)}}}.
 #+end_quote
 
-这一部分主要是纯理论，这里面有很多很装的单词，比如 Monad，它们都是 /斜体/ ，就算一遍没看懂[fn:13]，把这些词背下来也足够装好长一阵子逼了。
+这一部分主要是纯理论，这里面有很多很装的单词，比如 /{{{ruby(单子,Monad)}}}/，它们都是 /斜体/
+，就算一遍没看懂[fn:13]，把这些词背下来也足够装好长一阵子逼了。
 
-这里还有很多代码, 它们都成对出现, 通常第一段是 Haskell, 第二段是 Scala 3.
+这里还有很多代码, 它们都成对出现, 通常第一段是 Haskell, 第二段是 Scala 3.[fn:14]
 
 ** {{{ruby(范畴,Category)}}}
 #+INDEX: Catergory
 #+INDEX: 范畴
+
+对于计算机科学的学生，范畴并不是一个新的概念，在本科大纲里，大家都应该学过 /离散数学（Discrete Mathematics）/ ，其中会讲很多 /集合论（Set Theory）/ 图论，抽象代数的东西。
+现在回头看看，其实也就是集合论和抽象代数的内容。
+
+所以下面的概念都点到为止，只为解释写成代码会长什么样。
 
 一个 /{{{ruby(范畴,Category)}}}/ 包含两个玩意:
 - 东西 =O= （Object）
@@ -77,7 +83,7 @@ Alice didn’t think that proved it at all; however, she went on `And how do you
 注意到为什么我会箭头从右往左，接着看代码, 你会发现这个方向跟 compose 的方向刚好一致!
 #+END_QUOTE
 
-这些玩意对应到 haskell 的 typeclass 大致就是这样:
+这些玩意对应到 Haskell 的 Typeclass 大致就是这样:
 
 #+caption: Category definition in Haskell
 #+BEGIN_SRC haskell
@@ -751,14 +757,14 @@ def <=<[T[_], A, B, C](f: B => T[C])(g: A => T[B]): A => T[C] =
 #+END_SRC
 
 ** Summary
-第一部分理论部分都讲完了， 如果你读到这里还没有被这些{{{ruby(吊炸天,乱七八糟)}}}的概念搞daze，接下来可以看看它到底跟我们编程有鸟关系呢？第二部分将介绍这些概念产生的一些实用的monad
-
-- 👉 [[./part2.org][第二部分：{{{ruby(食用猫呢, Practical Monads)}}}]]
-- [[./part3.org][第三部分：{{{ruby(搞基猫呢, Advanced Monads)}}}]]
-
-当然我还没空全部写完，如果有很多人{{{ruby(预定,只要998)}}} Gumroad 上的 @@html: <script src="https://gumroad.com/js/gumroad.js"></script><a class="gumroad-button" href="https://gum.co/grokking-monad" target="_blank">Grokking Monad</a>@@ 电子书的话，我可能会稍微写得快一些。毕竟，写了也没人感兴趣也怪浪费时间的。不过，我猜也没几个人能看到这一行，就当是自言自语吧，怎么突然觉得自己好分裂。
+第一部分理论部分都讲完了， 如果你读到这里还没有被这些{{{ruby(吊炸天,乱七八糟)}}}的概念劝退，
+那么你这份如此强大得信念感，其实到后面两部分也不会有什么用。
+因为，接下来的例子会很简单，我们要通过编程中常遇到的场景看看理论到底该如何得到实践？
 
 * Footnotes
+
+[fn:14] 为什么用两种语言呢？第一： +这样代码量会翻倍，可以凑篇幅字数。+ 这样大家会熟悉多种语言对同一概念的诠释，从而举一反三。
+第二：读者受众会大一点，因为毕竟Haskell的表述比较简洁，有可能很容易理解，但是跟主流语言的表达方式大为不同，也有可能很难适应，加上表达方式更为具体的 Scala，便于加深理解。
 
 [fn:13] 可以继续看第二部分，看完概念是如何在现实中实现的，再回来看一遍，会感觉好很多。
 
