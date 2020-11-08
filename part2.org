@@ -10,12 +10,12 @@
 * {{{ruby(食用猫呢,Practical Monads)}}}
 
 [[./images/Alice_through_the_looking_glass.jpg]]
-
+[fn:6]
 #+BEGIN_QUOTE
 “If I had a world of my own, everything would be nonsense. 
 Nothing would be what it is, because everything would be what it isn't.
 And contrary wise, what is, it wouldn't be. And what it wouldn't be, it would. You see?”
-― Lewis Carroll, Alice's Adventures in Wonderland & Through the Looking-Glass 
+― Lewis Carroll, Alice's Adventures in Wonderland & Through the Looking-Glass [fn:6]
 #+END_QUOTE
 
 如果有一个单子的世界, 那一切都说不通了.
@@ -24,7 +24,7 @@ And contrary wise, what is, it wouldn't be. And what it wouldn't be, it would. Y
 
 到底什么是, 什么不是, 我们看编程世界里到底什么是单子？
 
-这一部分将介绍由一些实用的{{{ruby(单子实例,monad instances)}}}，通过这些单子实例，解决了分离计算与副作用, 已经组合性的问题。
+这一部分将介绍由一些实用的{{{ruby(单子实例,monad instances)}}}，通过这些单子实例，解决了分离计算与副作用, 以及组合性的问题。
 
 ** COMMENT Applicative
 *** Alternative
@@ -33,7 +33,7 @@ And contrary wise, what is, it wouldn't be. And what it wouldn't be, it would. Y
 
 ** Identity 本身就有
 
-{{{ruby(本身就有单子, Identity Monad)}}}[fn:5] 可能是最简单的单子了。本身不包含任何计算, 且只有一个构造器:
+{{{ruby(本身就有单子, Identity Monad)}}}[fn:1] 可能是最简单的单子了。本身不包含任何计算, 且只有一个构造器:
 #+BEGIN_SRC haskell :session part2
 newtype Identity a = Identity { runIdentity :: a }
 #+END_SRC
@@ -51,7 +51,7 @@ runIdentity :: Identity a -> a
 
 你看 ~runIdentity . Identity = id~ ，所以他们是同构的。
 
-左边的 =Identity= 是类型构造器[fn:1], 接收类型 =a= 返回 =Identity a= 类型
+左边的 =Identity= 是类型构造器[fn:3], 接收类型 =a= 返回 =Identity a= 类型
 
 如果 a 是 Int，那么就得到一个 =Identity Int= 类型。
 
@@ -130,9 +130,9 @@ Haskell 中定义一个 ADT 十分简单，不像 Scala 那么啰嗦。左边是
 - =Just=
 - =Nothing=
 
-其中 =a= [fn:3]表示是任意类型.
+其中 =a= [fn:4]表示是任意类型.
 
-所以 =Just 1= 会得到一个 =Num a => Mabye a= 类型[fn:4]，
+所以 =Just 1= 会得到一个 =Num a => Mabye a= 类型[fn:5]，
 =Nothing= 也会得到一个 =Maybe a= 只不过 =a= 没有类型约束。
 
 总之我们有了构造器可以构造出 =Maybe= 类型，而这个类型能做的事情，就要取决它实现了哪些 typeclass 的 instance 了。比如它可以是一个函子.
@@ -582,12 +582,14 @@ instance Monad (Cont r) where
 
 * Footnotes
 
-[fn:5] 从来没见过有人给这些数据类型按过中文名字, 不然我来, 这样也更好的体会这些数据类型的意图.
+[fn:6] https://en.wikipedia.org/wiki/Through_the_Looking-Glass
 
-[fn:4] 意思就是 =Maybe a= 但是 =a= 的类型约束为 =Num=
+[fn:1] 从来没见过有人给这些数据类型按过中文名字, 不然我来, 这样也更好的体会这些数据类型的意图.
 
-[fn:3] 一定要记得小写哦
+[fn:5] 意思就是 =Maybe a= 但是 =a= 的类型约束为 =Num=
+
+[fn:4] 一定要记得小写哦
 
 [fn:2] 见 [[file:part1.org::*/Adjunction%20Functor/%20%E4%BC%B4%E9%9A%8F%E5%87%BD%E5%AD%90][第一部分 伴随函子]]
 
-[fn:1] 也就是 Kind * -> *, 因为它非常的 nice, 一定要等到 a 才出类型
+[fn:3] 也就是 Kind * -> *, 因为它非常的 nice, 一定要等到 a 才出类型
