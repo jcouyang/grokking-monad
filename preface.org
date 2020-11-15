@@ -1,11 +1,15 @@
 本书的主要目的是为了解释 **为什么需要**， **如何理解** 以及 **如何使用** Monad，
-分为三个部分，{{{ruby(猫论,Catergory Theory)}}}，{{{ruby(食用猫呢,Practical Monads)}}}和{{{ruby(搞基猫呢,Advanced Monads)}}}。[fn:9]
+分为三大个部分，{{{ruby(猫论,Catergory Theory)}}}，{{{ruby(食用猫呢,Practical Monads)}}}和{{{ruby(搞基猫呢,Advanced Monads)}}}。[fn:9]
 
-猫论是理论基础，解释 Monad 是如何算出来的，若是觉得太无聊打可跳过，比较适合好奇心大的猫。
+{{{ruby(猫论,Catergory Theory)}}}是理论基础，解释单子由何而来，若是 +不想装逼装得有理有据+ 觉得太无聊其实可跳过，比较适合好奇心大的猫。
 
-食用猫呢提供很多日常会遇到的 Monad 供大家食用。
+{{{ruby(食用猫呢,Practical Monads)}}}提供很多日常会遇到的单子供大家食用。
 
-搞基猫呢适合谁你自然懂得。
+{{{ruby(搞基猫呢,Advanced Monads)}}}适合谁你自然懂得。
+
+其中所有例子都有双语 +中文和英语+ Haskell 和 Scala 解释，双语例子都成对出现，先 Haskell 后 Scala。
+至于为什么选择这两种语言？其实代表两大派系，一个ML系一个Java/C++系，若是看不懂 Haskell，Scala 可能
+会更好懂。
 
 当掌握了这种内容，不局限于 Haskell，而可以扩展到任何语言的编程中，即使是没有类型系统的语言，JS，说你呢，不要看人家PHP。
 

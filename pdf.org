@@ -28,6 +28,7 @@
 \setlength{\parskip}{\baselineskip}
 Copyright \copyright\ 2015-\the\year\ Jichao Ouyang
 
+Printable is generated from free softwares: GNU Emacs, orgmode, Tex, Graphivz DOT...
 \par\url{github.com/jcouyang/grokking-monad}
 
 \par\textit{First printing, 2020}
