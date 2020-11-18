@@ -42,7 +42,8 @@ newtype Identity a = Identity { runIdentity :: a }
 case class Identity[A](run: A)
 #+END_SRC
 
-这里使用 =newtype= 而不是 =data= 是因为 =Identity= 与 =runIdentity= 是同构的[fn:2].
+- 这里取名 =Identity= 叫 *本身就有* ，所以 =Identity a= 就是 *本身就有 a*
+- 这里使用 =newtype= 而不是 =data= 是因为 =Identity= 与 =runIdentity= 是 /同构/ 的[fn:2].
 
 #+BEGIN_SRC haskell
 Identity :: a -> Identity a
@@ -51,13 +52,14 @@ runIdentity :: Identity a -> a
 
 你看 ~runIdentity . Identity = id~ ，所以他们是同构的。
 
-左边的 =Identity= 是类型构造器[fn:3], 接收类型 =a= 返回 =Identity a= 类型
+左边的 =Identity= 是 /类型构造器/[fn:3], 接收类型 =a= 返回 =Identity a= 类型。
 
-如果 a 是 Int，那么就得到一个 =Identity Int= 类型。
+如果 =a= 是 =Int=, 那么就得到一个 =Identity Int= 类型。
 
-右边的 =Identity= 是数据构造器，也就是构造值，比如 =Identity 1= 会构造出一个值，其类型为 =Identity Int=
+右边的 =Identity= 是数据构造器，也就是构造值，比如 =Identity 1= 会构造出一个值，其类型为 =Identity Int= 。
 
-大括号比较诡异，可以想象成给 =a= 一个 key，同过这个 key 可以把 a 取出来，比如
+大括号比较诡异，可以想象成给 =a= 自动生成了一个 =Identity a -> a= 的函数， 比如:
+
 #+BEGIN_SRC haskell :session part2
 runIdentity (Identity 1)
 #+END_SRC
@@ -71,7 +73,7 @@ Identity(1).run
 
 会返回 1
 
-Identity 可以实现 Functor 和 Monad，就得到 Identity functor 和 Identity monad:
+*本身就有* 可以实现 Functor 和 Monad，就得到 Identity functor 和 Identity monad:
 
 #+BEGIN_SRC haskell
   instance Functor Identity where
@@ -82,30 +84,27 @@ Identity 可以实现 Functor 和 Monad，就得到 Identity functor 和 Identit
     Identity a >>= f = f a
 #+END_SRC
 
-而 Scala 则需要用 =implicit= 来实现 typeclass:
+而 Scala 则用 =given= 来实现 typeclass:
 
 #+BEGIN_SRC scala
-  implicit val identityFunctor: Functor[Identity] = new Functor[Identity] {
-    def fmap[A, B](f: A => B): Identity[A] => Identity[B] = {
+  given Functor[Identity]:
+    def fmap[A, B](f: A => B): Identity[A] => Identity[B] =
       case Identity(a) => Identity(f(a))
-    }
-  }
 
-  implicit val identityMonad: Monad[Identity] = new Monad[Identity] {
+
+  given Monad[Identity]:
     def pure[A](a: A): Id[A] = Identity(a)
-    def flatMap[A, B](f: A => Identity[B]): Identity[A] => Identity[B] = {
+    def flatMap[A, B](f: A => Identity[B]): Identity[A] => Identity[B] =
       case Identity(a) => f(a)
-    }
-  }
 #+END_SRC
 
-可以看到 Identity 即是{{{ruby(构造器,constructor)}}}，也是{{{ruby(解构器,destructure)}}}，利用模式匹配是可以解构出值的。
+可以看到 =Identity= 即是{{{ruby(构造器,constructor)}}}，也是{{{ruby(解构器,destructure)}}}，利用模式匹配是可以解构出值的。
 
-例如上面 Functor 实现中的 =fmap f (Identity a)=, 假如 =fmap= 的是 =Identity 1=,
+上面函子实现中的 =fmap f (Identity a)=, 假如 =fmap= 的是 =Identity 1=,
 那么这个模式匹配到 =(Identity a)= 时会通过解构器把 =1= 放到 =a= 的位置。
 
-Identity 看起来什么也没有干，就跟 identity 函数一样，但是实际上, 它也跟 identity 相对于函数一样
-相对于类型非常有用.
+*本来就有* 看起来什么也没有干，就跟 =identity= 函数一样，但是实际上, 它也跟 identity 相对于函数一样，在某些场景底下非常有用，比如后一部分搞基猫呢会
+提的高达猫。
 
 ** Maybe 可能会有
 {{{ruby(可能会有单子,Maybe Monad)}}}是一个超级简单的但比本身就有稍稍复杂的单子.
@@ -116,26 +115,23 @@ Identity 看起来什么也没有干，就跟 identity 函数一样，但是实�
 data Maybe a = Just a | Nothing
 #+END_SRC
 
+其中 =a= [fn:4]表示是任意类型.
+
 你看, 不管是 =Just= 还是 =Nothing= 都可以构造出一个 =Maybe= 类型的数据来.
 
-ADT 在 Scala 可以用 trait 表示, 而且, Scala 中的 =Maybe= 叫做 =Option=:
+ADT 在 Scala 可以用 enum 表示, 而且, Scala 中的 =Maybe= 叫做 =Option=:
 
 #+BEGIN_SRC scala
-trait Option[+A]
-case class Some[A](a: A) extends Option[A]
-case object None extends Option[Nothing]
+  enum Option[+A]:
+    case Some(a: A)
+    case None
 #+END_SRC
 
-Haskell 中定义一个 ADT 十分简单，不像 Scala 那么啰嗦。左边是类型构造器，右边有数据构造器，你会发现有一根竖线 =|= ， 它分隔着两个构造器
-- =Just=
-- =Nothing=
-
-其中 =a= [fn:4]表示是任意类型.
 
 所以 =Just 1= 会得到一个 =Num a => Mabye a= 类型[fn:5]，
 =Nothing= 也会得到一个 =Maybe a= 只不过 =a= 没有类型约束。
 
-总之我们有了构造器可以构造出 =Maybe= 类型，而这个类型能做的事情，就要取决它实现了哪些 typeclass 的 instance 了。比如它可以是一个函子.
+总之我们有了构造器可以构造出 =Maybe= 类型，而这个类型能做的事情，就要取决它实现了哪些 typeclass 的实例 了。比如它可以是一个函子.
 #+BEGIN_SRC haskell
   instance Functor Maybe where
     fmap f (Just a) = Just (f a)
@@ -143,12 +139,10 @@ Haskell 中定义一个 ADT 十分简单，不像 Scala 那么啰嗦。左边是
 #+END_SRC
 
 #+BEGIN_SRC scala
-  implicit val optionFunctor: Functor[Option] = new Functor[Option] {
-    def fmap[A, B](f: A => B): Option[A] => Option[B] = {
+  given Functor[Option]:
+    def fmap[A, B](f: A => B): Option[A] => Option[B] =
       case Some(a) => Some(f(a))
       case None => None
-    }
-  }
 #+END_SRC
 
 #+CAPTION: fmap :: (a -> b) -> f a -> f b
