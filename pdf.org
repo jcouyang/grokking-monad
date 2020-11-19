@@ -2,6 +2,7 @@
 #+SUBTITLE: 函数式装逼手册
 #+Date: <2017-02-10 Fri>
 #+AUTHOR: 欧阳继超
+#+PROPERTY: header-args :eval never-export
 #+LATEX_COMPILER: xelatex
 #+LATEX_CLASS: tufte
 #+LATEX_CLASS_OPTIONS: [letterspacing]
