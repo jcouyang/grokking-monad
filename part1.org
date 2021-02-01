@@ -224,9 +224,8 @@ class (Category c, Category d) => Functor c d t where
 
 #+caption: 函子的 Scala 定义
 #+BEGIN_SRC scala
-  trait Functor[C[_, _], D[_, _], T[_]] {
+  trait Functor[C[_, _], D[_, _], T[_]]:
     def fmap[A, B](c: C[A, B]): D[T[A], T[B]]
-  }
 #+END_SRC
 
 =Functor c d t= 这表示从范畴 c 到范畴 d 的一个 Functor t
@@ -239,9 +238,8 @@ class Functor (->) (->) t where
 #+END_SRC
 
 #+BEGIN_SRC scala
-trait Functor[=>[_, _], =>[_, _], T[_]] {
+trait Functor[=>[_, _], =>[_, _], T[_]]:
  def fmap[A, B](c: =>[A, B]): =>[T[A], T[B]]
-}
 #+END_SRC
 
 =->= 或者 ~=>~ 可以写在中间的:
@@ -254,9 +252,8 @@ class Functor t where
 #+END_SRC
 
 #+BEGIN_SRC scala
-  trait Functor[T[_]] {
-   def fmap[A, B](c: A => B): T[A] => T[B]
-  }
+  trait Functor[T[_]]:
+    def fmap[A, B](c: A => B): T[A] => T[B]
 #+END_SRC
 
 而 /{{{ruby(自函子,endofunctor)}}}/ 就是这种连接相同范畴的 Functor，因为它从范畴 Hask 到达同样的范畴 Hask。
@@ -449,10 +446,9 @@ class Endofunctor c t => Monad c t where
 #+END_SRC
 
 #+BEGIN_SRC scala
-  trait Monad[C[_, _], T[_]]] extends Endofunctor[C, T] {
+  trait Monad[C[_, _], T[_]]] extends Endofunctor[C, T]:
     def eta[A]: C[A, T[A]]
     def mu[A]: C[T[T[A]], T[A]]
-  }
 #+END_SRC
 同样，把 c = Hask 替换进去，就得到更类似我们 Haskell 中 Monad 的定义
 #+BEGIN_SRC haskell
@@ -462,10 +458,9 @@ class Endofunctor m => Monad m where
 #+END_SRC
 
 #+BEGIN_SRC scala
-  trait Monad[M[_]] extends Endofunctor[M] {
+  trait Monad[M[_]] extends Endofunctor[M]:
     def eta[A]: A => M[A]
     def mu[A]: M[M[A]] => M[A]
-  }
 #+END_SRC
 要推出单子的 \eta 变换，只需要让 FG = T。可以脑补一下，因为是自函子，因此可以抹掉 D，
 想象一下，当 D 这一块面被拿掉之后，线 F 和线 G 是不是就贴在一起了呢？两根贴着的线，不就是一根线吗？
@@ -557,8 +552,8 @@ unembed f = f id
 Scala 3 不需要插件或者开关[fn:17]，如果是 Scala 2 可以用 =apply= 来模拟. 比如 Cats 中 [[https://typelevel.org/cats/datatypes/functionk.html][FunctionK(~>)]]。
 #+BEGIN_SRC scala
   type ~>[F[_],G[_]] = [A] => F[A] => G[A]
-  def embed[F[_], A](fa: F[A])(implicit f: Functor[F]) =
-    [B] => (fn: A=>B) => fa.fmap(fn)
+  def embed[F[_], A](fa: F[A])(using F: Functor[F]) =
+    [B] => (fn: A=>B) => f.fmap(fn)(fa)
   def unembed[F[_]](fn: [B] => (A => B) => F[B]): F[A] =
     fn(identity)
 #+END_SRC

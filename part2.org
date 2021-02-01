@@ -26,11 +26,34 @@ And contrary wise, what is, it wouldn't be. And what it wouldn't be, it would. Y
 
 这一部分将介绍由一些实用的{{{ruby(单子实例,monad instances)}}}，通过这些单子实例，解决了分离计算与副作用, 以及组合性的问题。
 
-** COMMENT Applicative
-*** Alternative
-*** Arrow
-*** Bifunctor
+** Functor 食用函子定义
+#+BEGIN_SRC haskell
+class Functor f where
+  fmap :: (a -> b) -> (f a -> f b)
+  (<$) :: a -> f b -> f a
+  (<$) =  fmap . const
+#+END_SRC
 
+#+BEGIN_SRC scala
+trait Functor[F[_]]:
+  def fmap[A, B](fn: A => B): F[A] => F[B]
+  extension [B](fb: F[B])
+    def <$(a: A)(fb: F[B]): F[A] = fmap(const(a))
+#+END_SRC
+
+** Applicative
+#+BEGIN_SRC haskell
+class Functor f => Applicative f where
+  pure       :: a -> f a
+  (<*>)      :: f (a -> b) -> f a -> f B
+  liftA2     :: (a -> b -> c) -> f a -> f b -> f c
+  liftA2 f x = (<*>) (fmap f x)
+  (*>)       :: f a -> f b -> f b
+  a1 *> a2   = (id <$ a1) <*> a2
+  (<*)       :: f a -> f b -> f a
+  (<*)       = liftA2 const
+
+#+END_SRC
 ** Identity 本身就有
 
 {{{ruby(本身就有单子, Identity Monad)}}}[fn:1] 可能是最简单的单子了。本身不包含任何计算, 且只有一个构造器:
@@ -73,7 +96,7 @@ Identity(1).run
 
 会返回 1
 
-*本身就有* 可以实现 Functor 和 Monad，就得到 Identity functor 和 Identity monad:
+*本身就有* 可以实现 Functor 和 Monad，就得到 Identity 函子 和 Identity 单子。
 
 #+BEGIN_SRC haskell
   instance Functor Identity where
@@ -90,7 +113,6 @@ Identity(1).run
   given Functor[Identity]:
     def fmap[A, B](f: A => B): Identity[A] => Identity[B] =
       case Identity(a) => Identity(f(a))
-
 
   given Monad[Identity]:
     def pure[A](a: A): Id[A] = Identity(a)
@@ -161,7 +183,7 @@ ADT 在 Scala 可以用 enum 表示, 而且, Scala 中的 =Maybe= 叫做 =Option
 #+END_SRC
 
 #+BEGIN_SRC scala
-  given new Monad[Option]:
+  given Monad[Option]:
     def pure[A](a: A): Option[A] = Some(a)
     def flatMap[A, B](f: A => Option[B]): Option[A] => Option[B] =
       case Some(a) => f(a)
@@ -253,35 +275,57 @@ t a 的 kind 是 *，所以 t 必须是 kind * -> *
     Right r >>= k = k r
 #+END_SRC
 
+#+BEGIN_SRC scala
+given [A]: Monad[Either[A, ?]] with
+  def flatMap[B, C](f: B => Either[A, C]): Either[A, B] => Either[A, C] = (fa: Either[A, B]) =>
+    fa match
+      case Left(l) => Left(l)
+      case Right(r) => f(r)
+#+END_SRC
+
 很明显的，>>= 任何函数到{{{ruby(左边, Left)}}} 都不会改变，只有 >>= 右边才能产生新的计算。
 
-
 ** Reader 差一点就有
-Reader 的作用是给一个计算喂数据。
 
-在描述计算的时候，并不需要关心输入时什么，只需要 asks 就可以拿到输入值
+/差一点就有/ 的作用是描述一个需要喂数据的计算。
 
-而真正的输入，会在运行计算时给予。
+在描述计算的时候，并不需要关心具体输入的值是什么，更需要关注的是输入的类型。
+当计算需要以来该值时，只需要 asks 就可以假装拿到输入值，继续描述接下来的计算。
 
-跟 Identity 一样，我们用 newtype 来定义一个同构的 Reader 类型
+而真正的输入，会在最终运行计算时给予。
+
+跟 /本身就有/ 一样，我们用 newtype 来定义一个同构的 /差一点就有/ 类型：
+
 #+BEGIN_SRC haskell
 newtype Reader e a = Reader { runReader :: (e -> a) }
 #+END_SRC
 
-其中
+#+BEGIN_SRC scala
+case class Reader[E, A](run: E => A)
+#+END_SRC
+
+其中：
 - e 是输入
 - a 是结果
-- 构造 Reader 类型需要确定 输入的类型 e 与输出的类型 a
+- 构造 Reader 类型需要确定输入的类型 e 与输出的类型 a
 - =runReader= 的类型是 =runReader:: (Reader e a) -> (e -> a)=
 
 也就是说在描述完一个 Reader 的计算后，使用 runReader 可以得到一个 e -> a 的函数，使用这个函数，就可以接收输入，通过构造好的计算，算出结果 a 返回。
 
-那么，让我们来实现 Reader 的 monad instance，就可以描述一个可以 ask 的计算了。
+那么，让我们来实现 Reader 的单子实力，就可以描述一个可以 ask 的计算了。
 
 #+BEGIN_SRC haskell
 instance Monad (Reader e) where
     return a         = Reader $ \_ -> a
     (Reader g) >>= f = Reader $ \e -> runReader (f (g e)) e
+#+END_SRC
+
+#+BEGIN_SRC
+given [E]: Monad[Reader[E, ?]] with
+  def pure[A](a: A): Reader[E, A] = Reader((e: E) => a)
+  def flatMap[A, B](f: A => Reader[E, B]): Reader[E, A] => Reader[E, B] = (fa: Reader[E, A]) =>
+    Reader((e: E) => f(fa.run(e)).run(e)
+    
 #+END_SRC
 
 跟Either一样，我们只能定义 Reader e 的 monad instance。
