@@ -1,6 +1,6 @@
 with import <nixpkgs> {};
 mkShell {
   buildInputs = [
-    texlive.combined.scheme-small
+    texlive.combined.scheme-full
   ];
 }
