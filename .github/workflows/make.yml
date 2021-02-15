@@ -15,4 +15,4 @@ jobs:
         with:
           nix_path: nixpkgs=channel:nixos-20.09
       - name: make PDF
-        run: nix-shell --run 'xelatex --help'
+        run: nix-shell --run 'make grokking-monad.pdf'
