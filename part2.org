@@ -26,22 +26,56 @@ And contrary wise, what is, it wouldn't be. And what it wouldn't be, it would. Y
 
 这一部分将介绍由一些实用的{{{ruby(单子实例,monad instances)}}}，通过这些单子实例，解决了分离计算与副作用, 以及组合性的问题。
 
-** TODO Functor 食用函子定义
+** Functor 食用函子定义
+在实践中，通过函子的法则我们可以从fmap扩展出一些更方便的函数来，这也是第一章坚实的理论基础的现实意义。
+
+比如，理论中我们的函子只有 =fmap= ，但是，仅仅需要实现 =fmap=，你的函子实例就会免费得到一些列衍生函数。
+
+下面这个函子我们多实现了一个 {{{ruby(=<$=,voidRight)}}} 函数，基于 =fmap= 函数, 得到一个可以把左边的 =a= 放入 =f= 把 =b= 扔掉的这么一个新函数。
 #+BEGIN_SRC haskell
-class Functor f where
-  fmap :: (a -> b) -> (f a -> f b)
-  (<$) :: a -> f b -> f a
-  (<$) =  fmap . const
+  class Functor f where
+    fmap :: (a -> b) -> (f a -> f b)
+    (<$) :: a -> f b -> f a
+    (<$) =  fmap . const
 #+END_SRC
 
 #+BEGIN_SRC scala
 trait Functor[F[_]]:
   def fmap[A, B](fn: A => B): F[A] => F[B]
-  extension [B](fb: F[B])
-    def <$(a: A)(fb: F[B]): F[A] = fmap(const(a))
+  @targetName("voidLeft")
+  infix def `$>`(a: B): F[B] = fmap(const[B, A](a))(fa)
 #+END_SRC
 
-** TODO Applicative
+#+begin_quote
+由于 Scala 偏 Java 调用习惯，实现 {{{ruby(=$>=, voidLeft)}}} 更适合一些。
+#+end_quote
+
+这样一来，当我们实现一个函子的时候，其实只用实现 =fmap= 一个函数
+
+#+begin_src haskell
+instance  Functor Maybe  where
+    fmap _ Nothing       = Nothing
+    fmap f (Just a)      = Just (f a)
+#+end_src
+
+#+begin_src scala
+  given Functor[Option] with
+    def fmap[A, B](f: A => B): Option[A] => Option[B] = (oa: Option[A]) => oa.map(f)
+#+end_src
+
+即可免费多得到一个函数 =<$= / =$>=
+#+begin_src haskell
+1 <$ (Just 2)
+#+end_src
+
+#+begin_src scala
+Option(2) $> 1
+#+end_src
+
+** Applicative 实用应用子[fn:7]
+
+应用子是函子的扩展，提供了实践中更有用的一堆函数，而你只需要简单实现两个函数 =pure= 和 =<*>=
+
 #+BEGIN_SRC haskell
 class Functor f => Applicative f where
   pure       :: a -> f a
@@ -54,18 +88,93 @@ class Functor f => Applicative f where
   (<*)       = liftA2 const
 #+END_SRC
 
+=<*>= 和 =liftA2= 可以选其中一个实现，他们互相等价。
+
 #+begin_src scala
-  trait Applicative[F[_]] extends Functor[F]:
-    def pure[A](a: A): F[A]
-    def ap[A, B](fab: F[A=>B]): F[A] => F[B]
-    def liftA2[A, B, C](f: A => B => C): F[A] => F[B] => F[C] = (x: F[A]) =>
-      ap(fmap(f)(x))
-    extension [A](fa: F[A])
-      def *>(fb: F[B]) = (identity <$ fa) <*> fb
-      def <*(fb: F[B]) = liftA2(const)
-    extension [A, B](fab: F[A => B])
-      def <*>(fa: F[B]) = ap(fab)(fa)
+trait Applicative[F[_]](using functor: Functor[F]):
+  export functor._
+  def pure[A](a: A): F[A]
+  def liftA2[A, B, C](f: A => B => C): F[A] => F[B] => F[C]
+
+  extension [A, B](fab: F[A => B])
+    @targetName("ap")
+    infix def <*>(fa: F[A]): F[B] = liftA2(identity[A => B])(fab)(fa)
+
+  extension [A, B](fa: F[A])
+    @targetName("productRight")
+    infix def *>(fb: F[B]): F[B] =  fa.`$>`(identity[B]) <*> fb
+
+    @targetName("productLeft")
+    infix def <*(fb: F[B]): F[A] = liftA2(const[A, B])(fa)(fb)
+
+    @targetName("apFlipped")
+    infix def <**>(fab: F[A => B]): F[B] = liftA2((a: A) => (f: A => B) => f(a))(fa)(fab)
+
+    inline def when(cond: Boolean): F[Unit] = inline if cond then fa.void else pure(())
+    inline def unless(cond: Boolean): F[Unit] = fa.when(!cond)
 #+end_src
+
+Scala 中我偏向于固定允许实现 =liftA2= ，首先它比较容易实现，其实 =<*>= 很容易会被错误实现。
+
+#+begin_src haskell
+instance Applicative Maybe where
+    pure = Just
+
+    Just f  <*> m       = fmap f m
+    Nothing <*> _m      = Nothing
+#+end_src
+
+#+begin_src scala
+  given Applicative[Option] with
+    def pure[A](a: A): Option[A] = Option(a)
+    def liftA2[A, B, C](f: A => B => C) = (oa: Option[A]) => (ob: Option[B]) =>
+      oa match
+        case Some(a) => ob match
+          case Some(b) => Option(f(a)(b))
+          case None => None
+        case None => None
+#+end_src
+
+应用子在日常实践中实在是太好用了，我们来看下具体每一个函数都有多好用吧。
+
+*** {{{ruby(<*>, ap)}}}
+=ap= 是利用率比较高的一个函数，通常的食用方法是：
+#+begin_src haskell
+(+) <$> Just 1 <*> Just 2
+#+end_src
+
+#+begin_src scala
+  val plus = (x: Int) => (y: Int) => x + y
+
+  plus `<$>` Option(1) <*> Option(2)
+#+end_src
+
+阅读起来其实很形象，大致可以理解成把操作 =Int= 的加法函数用 =<$>= 提升到可以应用到 =Maybe Int= 的函数，然后就可以传入两个 =Maybe Int= 了，用 =<*>= 连接。
+
+#+begin_src haskell
+(+)          1          2 -- 应用 + 到两个 Int
+(+) <$> Just 1 <*> Just 2 -- 应用 + 到两个 Maybe Int
+#+end_src
+
+同理，三个参数的函数也可以这么连
+#+begin_src haskell
+f          1          2          3 -- 应用 f 到三个 Int
+f <$> Just 1 <*> Just 2 <*> Just 3 -- 应用 + 到三个 Maybe Int
+#+end_src
+
+*** {{{ruby(*>, productRight)}}} & {{{ruby(<*, productLeft)}}}
+
+既然 =<*>= 是连接两个函子，那么 =*>= 是连接两个但只返回右边，=<*= 返回左边。
+
+#+begin_src haskell
+  Just 1 *> Just 2 <* None
+#+end_src
+
+#+begin_src scala
+Option(1) *> Option(2) <* Nothing
+#+end_src
+
+应该很容易猜到返回什么吧，对，就是所有箭头指向的那个。
 
 ** TODO Monad
    #+begin_src haskell
@@ -658,6 +767,8 @@ instance Monad (Cont r) where
 当然我又还没空全部写完，如果还有很多人{{{ruby(预定,只要998)}}} Gumroad 上的 @@html: <script src="https://gumroad.com/js/gumroad.js"></script><a class="gumroad-button" href="https://gum.co/grokking-monad" target="_blank">Grokking Monad</a>@@ 电子书的话，我可能会稍微写得快一些。毕竟，写了也没人感兴趣也怪浪费时间的。不过，我猜也没几个人能看到这一行，就当是我又自言自语吧，怎么又突然觉得自己好分裂，诶~，为什么我要说又？
 
 * Footnotes
+
+[fn:7]实在不知道该怎么翻这个...就姑且都加个”子“吧。
 
 [fn:6] https://en.wikipedia.org/wiki/Through_the_Looking-Glass
 
