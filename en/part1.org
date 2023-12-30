@@ -1,0 +1,758 @@
+* COMMENT
+#+BEGIN_SRC emacs-lisp
+(require 'ob-dot)
+#+END_SRC
+
+#+RESULTS:
+: ob-dot
+
+* Category Theory
+#+BEGIN_QUOTE
+"Yes, I've heard about categories, but their significance remains a bit elusive. What exactly defines a category?"
+#+END_QUOTE
+
+Excellent question! Think of a category as a grand kingdom, where mathematical structures are like castles, and morphisms are the pathes connecting them. The crucial decree is the composition law: a promise that you can traverse from one castle to another through a series of pathes.
+
+#+begin_quote
+"So, categories are like kingdoms of mathematical structures connected by pathes?"
+#+end_quote
+
+Precisely! And every castle (object) has a leading to itself—the identity path(morphism). Categories are the architects of this kingdom, ensuring that the pathes behave under the laws of composition and that every castle has a path back to itself.
+
+#+begin_quote
+It's like a structured world where everything is interconnected.
+#+end_quote
+
+Exactly! The beauty of categories lies in their generality. They provide a unified language for understanding diverse mathematical concepts. Whether you're dealing with algebraic structures, topology, or other mathematical realms, the language of categories transcends specific domains.
+
+#+BEGIN_SRC dot :file images/category.png :exports results
+    digraph CategoryKingdom {
+    // Nodes (Objects/Castles)
+    CastleA
+    CastleB
+    CastleC
+
+  
+    CastleA -> CastleA [xlabel="Identity Arrows\n(Path leading to itself)"]
+    CastleB -> CastleB [xlabel="Identity"]
+    CastleC -> CastleC [xlabel="Identity"]
+
+    CastleA -> CastleB [xlabel="Morphisms f \n(Pathes between Castles/Objects)"]
+    CastleB -> CastleC [xlabel="Morphism g"]
+    CastleA -> CastleC [xlabel="Morphism h"]
+  
+    // Edge styling
+    edge [dir=forward] // Directed edges
+    node [shape=circle] // Nodes represented as circles
+  }
+#+END_SRC
+#+CAPTION: Category of Kindom
+#+RESULTS:
+[[file:images/category.png]]
+
+
+#+begin_quote
+"But why go through the trouble of defining this abstract structure?"
+#+end_quote
+
+Ah, a keen question! Categories reveal deep connections and patterns that might not be apparent when focusing on individual mathematical structures. It's like having a universal dictionary that allows mathematicians to speak a common language and draw parallels between seemingly disparate concepts.
+
+#+begin_quote
+"Can you provide a concrete example to illustrate this?"
+#+end_quote
+
+
+Certainly! Imagine a category where the castles are types, and the bridges are type arrows. The composition law ensures that if you travel from one type to another, you follow a path of arrows.
+
+#+begin_src dot :file images/category-of-hask.png :exports results
+digraph CategoryHask {
+  // Nodes (Types)
+  IntType [label="Int"]
+  StringType [label="String"]
+  ListType [label="List"]
+
+  // Identity Arrows (Bridges leading to itself)
+  IntType -> IntType [label="Identity"]
+  StringType -> StringType [label="Identity"]
+  ListType -> ListType [label="Identity"]
+
+  // Morphisms (Functions between Types)
+  IntType -> StringType [label="Function f"]
+  StringType -> ListType [label="Function g"]
+  IntType -> ListType [label="Function h"]
+  
+  // Edge styling
+  edge [dir=forward] // Directed edges
+  node [shape=circle] // Nodes represented as circles
+}
+#+end_src
+
+#+RESULTS:
+[[file:images/category-of-hask.png]]
+
+
+#+caption: [[https://hackage.haskell.org/package/base-4.19.0.0/docs/Control-Category.html][Category definition in Haskell]]
+#+BEGIN_SRC haskell
+class Category (cat :: k -> k -> Type) where
+  id :: cat a a
+  (.) :: cat y z -> cat x y -> cat x z
+#+END_SRC
+
+#+begin_quote
+"~id~ and ~.~ are very straightforward since we are using them everyday, but what is those arrows after ~cat ?~"
+#+end_quote
+
+I think I shall start from the begining, =class= defines rules for a ~Category cat,~ which means, for example if you want to form a ~Category~ of Castles you need to follow the following laws:
+- ~Bridge~ must be a /higher kind/ ~k -> k -> Type~ think about it like function for type for now, and it will make some sense. So it reads "If Castle takes a kind and, another kind, it will give you a Type" 
+- ~Castle~ must also follow the ~Category~ law to have a ~id~ path leading to itself
+- The final law is, if you know the path from ~Castle Gondor~ to ~Castle Mirkwood~ and the path from ~Mirkwood~ to ~Rohan~,sure thing you know how to travel from ~Gondor~
+ to ~Rohan.~
+
+#+begin_quote
+"So since ~->~ in Haskell meets these laws, it is already a legal Category"
+#+end_quote
+
+Yes indeed...
+
+#+begin_quote
+"Sounds like Category is such a generic thing that can apply to everything, crazy thoughts, can we have category of category?"
+#+end_quote
+
+
+** Functor
+
+
+两个范畴中间可以用叫 Functor 的东西来连接起来，比如一个从范畴 C 到范畴 D 的函子 T，我们可以标
+作 =Functor C D T= 。
+
+#+BEGIN_SRC dot :file images/functor.png :exports results
+  digraph {
+
+  label="Functor C D T"
+  compound=true;
+  rankdir=RL
+  subgraph cluster_C {
+          style=dotted
+          label="C"
+          a -> a [label=id]
+          a -> b [label=g]
+          b -> c [label=f]
+          a -> c [label="f . g"]
+  }
+  subgraph cluster_D {
+          style=dotted
+          label=D
+          "T a" -> "T a" [label="T id"]
+          "T a" -> "T b" [label="T g"]
+ "T b" -> "T c" [label="T f"]
+          "T a" -> "T c" [label="T f . g = T f . T g"]
+  }
+
+  c ->"T a"[ltail=cluster_C,lhead=cluster_D,label=T]
+  }
+#+END_SRC
+
+#+CAPTION: Functor C D T, 从 C 到 D 范畴的Functor T
+#+Functor Category
+#+RESULTS:
+[[file:images/functor.png]]
+
+所以大部分把函子或者单子比喻成盒子其实在定义上是错的，虽然这样比喻比较容易理解，在使用上问题也不大。但是，函子只是从一个范畴到另一个范畴的箭头而已。
+
+- 范畴间东西的函子标记为 =T(O)=
+- 范畴间箭头的函子标记为 =T(~>)=
+- 任何范畴 C 上存在一个 T 把所有的 O 和 ~> 都映射到自己，标记为函子 1_C
+  - 1_C(O) = O
+  - 1_C(~>) = ~>
+
+#+caption: 函子的 Haskell 定义
+#+BEGIN_SRC haskell
+class (Category c, Category d) => Functor c d t where
+  fmap :: c a b -> d (t a) (t b)
+#+END_SRC
+
+#+caption: 函子的 Scala 定义
+#+BEGIN_SRC scala
+  trait Functor[C[_, _], D[_, _], T[_]]:
+    def fmap[A, B](c: C[A, B]): D[T[A], T[B]]
+#+END_SRC
+
+=Functor c d t= 这表示从范畴 c 到范畴 d 的一个 Functor t
+
+如果把范畴 c 和 d 都限制到 Hask 范畴：
+
+#+BEGIN_SRC haskell
+class Functor (->) (->) t where
+  fmap :: (->) a b -> (->) (t a) (t b)
+#+END_SRC
+
+#+BEGIN_SRC scala
+trait Functor[=>[_, _], =>[_, _], T[_]]:
+ def fmap[A, B](c: =>[A, B]): =>[T[A], T[B]]
+#+END_SRC
+
+=->= 或者 ~=>~ 可以写在中间的:
+
+这样就会变成我们熟悉的函子定义：[fn:5]
+
+#+BEGIN_SRC haskell
+class Functor t where
+  fmap :: (a -> b) -> (t a -> t b)
+#+END_SRC
+
+#+BEGIN_SRC scala
+  trait Functor[T[_]]:
+    def fmap[A, B](c: A => B): T[A] => T[B]
+#+END_SRC
+
+而 /{{{ruby(自函子,endofunctor)}}}/ 就是这种连接相同范畴的 Functor，因为它从范畴 Hask 到达同样的范畴 Hask。
+#+INDEX: endofunctor
+#+INDEX: 自函子
+
+这回看代码就很容易对应上图和概念了, 这里的自函子只是映射范畴 ~->~ 到 ~->~, 箭头函数那个箭头, 类型却变成了 =t a= 。
+
+这里的 fmap 就是 T(~>)，在 Hask 范畴上，所以是 T(->), 这个箭头是函数，所以也能表示成 T(f) 如果 =f:: a -> b=
+
+** COMMENT {{{ruby(Cat,猫)}}}
+
+递归的, 当我们可以把一个范畴看成一个对象，函子看成箭头的话，那么我们又得到了一个新的范畴，这种对象是范畴箭头是函子的范畴我们叫它 -- /{{{ruby(Cat,猫)}}}/ 。
+
+已经{{{ruby(没,meow)}}}的办法用语言描述这么高维度的事情了，请回忆<<Functor Category>>并把 C 和 D 想象成点。
+
+** COMMENT 自然变换 / Natural Transformations <<NT>>
+
+函子是范畴间的映射，所以如果我们现在又把 Cat 范畴看成是对象, 那 Cat 范畴之间的箭头，其实就是函子的函子，
+又升维度了，我们有个特殊的名字给它，叫 +喵的变换+ /{{{ruby(自然变换,Natural Transformations)}}}/ 。
+#+INDEX: Natural Transformations
+#+INDEX: 自然变换
+
+#+BEGIN_SRC dot :file images/natrual-transformation.png :exports results
+  digraph {
+  compound=true;
+  rankdir=RL
+  subgraph cluster_C {
+          style=dotted
+          label="C"
+          a -> a [label=id]
+          a -> b [label=g]
+          b -> c [label=f]
+          a -> c [label="f . g"]
+  }
+  subgraph cluster_D {
+          style=dotted
+          label=D
+          "G a" -> "G a" [label="G id"]
+          "G a" -> "G b" [label="G g"]
+          "G b" -> "G c" [label="G f"]
+          "G a" -> "G c" [label="G f . g = G f . G g"]
+          "F a" -> "F a" [label="F id"]
+          "F a" -> "F b" [label="F g"]
+          "F b" -> "F c" [label="F f"]
+          "F a" -> "F c" [label="F f . g = F f . F g"]
+  }
+  subgraph FunctorCategory {
+          style=dotted
+          label="Functor Category"
+          rank=same;
+          functorG [label="G",shape=plaintext,width=0.01, height=0.01];
+          functorF [label="F", shape=plaintext, width=0.01, height=0.01];
+  }
+  functorF -> functorG[label="η"]
+  c -> functorG [arrowhead=none]
+  c -> functorF [arrowhead=none]
+  functorG ->"G a"[ltail=cluster_C,lhead=cluster_D]
+
+  functorF ->"F a"[ltail=cluster_C,lhead=cluster_E]
+  }
+#+END_SRC
+
+#+CAPTION[Functor G \eta]: Functor F 和 G 以及 F 到 G 的自然变化
+#+RESULTS:
+[[file:images/natrual-transformation.png]]
+
+
+范畴 c 上的函子 f 到 g 的自然变化就可以表示成：
+#+BEGIN_SRC haskell
+type Nat c f g = c (f a) (g a)
+#+END_SRC
+
+Scala 3 的 rank n types[fn:6] 也很简洁：
+#+BEGIN_SRC scala
+type Nat[C[_,_],F[_],G[_]] = [A] => C[F[A], G[A]]
+#+END_SRC
+
+如果换到 Hask 范畴上的自然变化就变成了：
+
+#+BEGIN_SRC haskell
+type NatHask f g = f a -> g a
+#+END_SRC
+
+#+BEGIN_SRC scala
+type Nat[F[_],G[_]] = [A] => F[A] => G[A]
+#+END_SRC
+
+这就是 Scala 中常见的 FunctionK[fn:15]。
+
+恭喜你到达 Functor 范畴.
+
+当然, 要成为范畴，还有两个属性:
+- id 为 f a 到 f a 的自然变换
+- 自然变换的组合
+
+#+BEGIN_SRC dot :file images/functor-category.png :exports results
+digraph FunctorCategory {
+          style=dotted
+          label="Functor Category"
+          rank=same;
+          functorG [label="G",shape=plaintext,width=0.01, height=0.01];
+          functorF [label="F", shape=plaintext, width=0.01, height=0.01];
+functorF -> functorG[label="η"]
+  }
+#+END_SRC
+
+#+RESULTS:
+[[file:images/functor-category.png]]
+
+别着急, 我们来梳理一下，如果已经不知道升了几个维度了，我们假设类型所在范畴是第一维度
+- 一维： Hask， 东西是类型，箭头是 ->
+- 二维： Cat， 东西是 Hask， 箭头是 Functor
+- 三维： Functor范畴， 东西是Functor， 箭头是自然变换
+
+感觉到达三维已经是极限了，尼玛还有完没完了，每升一个维度还要起这么多装逼的名字，再升维度老子就画不出来了。
+
+所以，是时候引入真正的技术了 -- String Diagram。
+
+** COMMENT String Diagram
+
+String Diagram[fn:16] 的概念很简单，就是点变线线变点。
+
+还记得当有了自然变换之后，三个维度已经没法表示了，那原来的点和线都升一维度，变成线和面，这样，就腾出一个点来表示自然变换了。
+
+#+CAPTION: String Diagram：自然变换是点，函子是线，范畴是面，自然变换是点
+[[file:images/p1-string-diagram.png]]
+
+组合（compose）的方向是从右往左，从下到上。
+
+阅读起来，你会发现左右图给出的信息是完全等价的：
+1. 范畴 E 通过 函子 D 到范畴 D，范畴 D 通过函子 F 到范畴 C
+2. 范畴 E 通过 函子 E 到范畴 C
+3. F . G 通过自然变换 \alpha 到 H
+
+** COMMENT Adjunction Functor 伴随函子
+#+INDEX: Adjunction Functor
+伴随函子是范畴 C 和 D 之间有来有回的函子，为什么要介绍这个，因为它直接可以推出单子。
+
+让我们来看看什么叫有来回。
+
+[[file:images/p1-adjunction-functor.png]]
+
+其中：
+
+- 图右：一个范畴 C 可以通过函子 G 到范畴 D，再通过函子 F 回到 C，那么 F 和 G 就是伴随函子。
+- 图中：范畴 C 通过函子组合 F . G 回到范畴 C，函子 G . F 通过自然变换 \eta 到函子 1_D 
+- 图左：范畴 D 通过函子组合 G . F 回到范畴 D，函子 1_C 通过自然变化 \epsilon 到函子 F . G
+
+同时根据同构的定义，G 与 F 是 /同构/ 的。
+#+INDEX: isomorphic
+#+INDEX: 同构
+
+同构指的是若是有
+#+BEGIN_SRC haskell
+f :: a -> b
+f':: b -> a
+#+END_SRC
+
+那么 f 与 f' 同构，因为 ~f . f' = id = f' . f~
+
+伴随函子的 F . G 组合是 C 范畴的 id 函子 ~F . G = 1_c~
+
+#+CAPTION: 伴随函子的两个Functor组合, 左侧记为 F eta, 右侧记为 epsilon F
+[[file:images/p1-ajunction-functor-compose.png]]
+
+注意看坐标，该图横着组合表示函子组合，竖着是自然变换维度，因此是自然变换的组合。
+
+#+CAPTION: eta . epsilon = F -> F
+[[file:images/p1-ajunction-functor-compose-nat.png]]
+
+当组合两个自然变换 \eta . \epsilon 得到一个弯弯曲曲的 F 到 F 的线时，我们可以拽着 F 的两端一拉，就得到了直的 F 线。
+
+String Diagram 神奇的地方是所有线都可以拉上下两端，因为线不管是弯的还是直的，包含的信息并不会发生变化。
+这个技巧非常有用，在之后的单子推导还需要用到。
+
+** COMMENT 从伴随函子到 {{{ruby(单子,Monad)}}}
+有了伴随函子，很容易推出单子，让我们先来看看什么是单子：
+
+- 首先，它是一个自函子（endofunctor） T
+- 有一个从 i_c 到 T 的自然变化 \eta (eta)
+- 有一个从 T^2 到 T 的自然变化 \mu (mu)
+
+[[file:images/p1-monad-properties.png]]
+
+#+BEGIN_SRC haskell
+class Endofunctor c t => Monad c t where
+  eta :: c a (t a)
+  mu  :: c (t (t a)) (t a)
+#+END_SRC
+
+#+BEGIN_SRC scala
+  trait Monad[C[_, _], T[_]]] extends Endofunctor[C, T]:
+    def eta[A]: C[A, T[A]]
+    def mu[A]: C[T[T[A]], T[A]]
+#+END_SRC
+同样，把 c = Hask 替换进去，就得到更类似我们 Haskell 中 Monad 的定义
+#+BEGIN_SRC haskell
+class Endofunctor m => Monad m where
+  eta :: a -> (m a)
+  mu :: m m a -> m a
+#+END_SRC
+
+#+BEGIN_SRC scala
+  trait Monad[M[_]] extends Endofunctor[M]:
+    def eta[A]: A => M[A]
+    def mu[A]: M[M[A]] => M[A]
+#+END_SRC
+要推出单子的 \eta 变换，只需要让 FG = T。可以脑补一下，因为是自函子，因此可以抹掉 D，
+想象一下，当 D 这一块面被拿掉之后，线 F 和线 G 是不是就贴在一起了呢？两根贴着的线，不就是一根线吗？
+
+#+CAPTION: 伴随函子的 epsilon 就是单子的 eta
+[[file:images/p1-ajunction-functor-to-monad-eta.png]]
+
+同样的，当 FG = T, 也就是把 D 这陀给抹掉，F 和 G 就变成了 T。
+#+CAPTION: 伴随函子的 F eta G 是函子的 mu
+[[file:images/p1-ajunction-functor-to-monad-mu.png]]
+
+*** 三角等式
+
+三角等式是指 \mu . T \eta = T = \mu . \eta T
+
+要推出三角等式只需要组合 F \eta G 和 \epsilon F G
+#+CAPTION: F eta G  . epsilon F G = F G
+[[file:images/p1-adjunction-functor-triangle.png]]
+#+CAPTION: F eta G  . epsilon F G= F G 对应到Monad就是 mu . eta T = T
+[[file:images/p1-monad-triangle.png]]
+
+换到代码上来说
+#+BEGIN_SRC haskell
+    (mu . eta) m = m
+#+END_SRC
+
+同样的，左右翻转也成立
+
+#+CAPTION: F eta G . F G epsilon = F G
+[[file:images/p1-adjunction-functor-triangle-reverse.png]]
+#+CAPTION: F eta G . F G epsilon = F G 对应到 Monad是 mu . T eta = T
+[[file:images/p1-monad-triangle-reverse.png]]
+T \eta 就是 fmap eta
+#+BEGIN_SRC haskell
+    (mu . fmap eta) m = m
+#+END_SRC
+
+如果把 ~mu . fmap~ 写成 ~>>=~ , 就有了
+
+#+BEGIN_SRC haskell
+m >>= eta = m
+#+END_SRC
+
+*** 结合律
+
+单子另一大定律是结合律，让我们从伴随函子推起
+
+假设我们现在有函子 F \eta G 和 函子 F \eta G F G, compose 起来会变成  F \eta G . F \eta G F G
+[[file:images/p1-ajunction-functor-monad-laws-1.png]]
+
+用 F G = T ， F \eta G = \mu 代换那么就得到了单子的 \mu . \mu T
+[[file:images/p1-ajunction-functor-monad-laws-2.png]]
+
+当组合 F \eta G 和 F G F \mu G 后，会得到一个镜像的图
+[[file:images/p1-ajunction-functor-monad-laws-3.png]]
+
+对应到单子的 \mu . T \mu
+
+结合律是说 \mu . \mu T = \mu . T \mu , 即图左右翻转结果是相等的，为什么呢？看单子的String Diagram 不太好看出来，我们来看伴随函子
+
+如果把左图的左边的 \mu 往上挪一点，右边的 \mu 往下挪一点，是不是跟右图就一样了
+[[file:images/p1-ajunction-functor-monad-laws-4.png]]
+
+结合律反映到代码中就是
+#+BEGIN_SRC haskell
+mu . fmap mu = mu . mu
+#+END_SRC
+
+代码很难看出结合在哪里，因为正常的结合律应该是这样的 (1+2)+3 = 1+(2+3)，但是不想加法的维度不一样，这里说的是自然变换维度的结合，可以通过String Diagram 很清楚的看见结合的过程，即 \mu 左边的两个T和先 \mu 右边两个 T 是相等的。
+
+** COMMENT Yoneda lemma / +米田共+ 米田引理
+#+INDEX: 米田引理
+#+INDEX: Yoneda Lemma
+
+米田引理是说所有的函子 =f a= 一定存在两个变换 =embed= 和 =unembed=，使得 =f a= 和 =(a -> b) -> F b= 同构。
+
+要再 Haskell 中做到这一波操作需要先打开 =RankNTypes= 的编译器开关：
+
+#+BEGIN_SRC haskell
+{-# LANGUAGE RankNTypes #-}
+
+embed :: Functor f => f a -> (forall b . (a -> b) -> f b)
+embed x f = fmap f x
+
+unembed :: Functor f => (forall b . (a -> b) -> f b) -> f a
+unembed f = f id
+#+END_SRC
+
+Scala 3 不需要插件或者开关[fn:17]，如果是 Scala 2 可以用 =apply= 来模拟. 比如 Cats 中 [[https://typelevel.org/cats/datatypes/functionk.html][FunctionK(~>)]]。
+#+BEGIN_SRC scala
+  type ~>[F[_],G[_]] = [A] => F[A] => G[A]
+  def embed[F[_], A](fa: F[A])(using F: Functor[F]) =
+    [B] => (fn: A=>B) => f.fmap(fn)(fa)
+  def unembed[F[_]](fn: [B] => (A => B) => F[B]): F[A] =
+    fn(identity)
+#+END_SRC
+
+=embed= 可以把 =f a= 变成 =(a -> b) -> f b=
+
+=unembed= 是反过来， =(a -> b) -> f b= 变成 =f a=
+
+上个图可能就明白了：
+#+BEGIN_SRC dot :file images/yoneda-lemma.png  :exports results
+    digraph {
+            rankdir=RL
+            newrank=true;
+            compound=true;
+            subgraph cluster_C {
+                  0[style=invis,shape=point,height=0,margin=0];
+                    style=dotted
+                    label=C
+                    a;b;
+                    a -> b
+            }
+
+
+
+            subgraph cluster_D {
+                  1[style=invis, shape=point,height=0,margin=0];
+                    style=dotted
+                    label=D
+                    "F a" -> "F b"
+            }
+            edge[constraint=false, style=solid];
+            0 -> 1[ltail=cluster_C, lhead=cluster_D, label=F]
+            // a -> F [ltail=cluster_C,arrowhead=none]
+            // F ->"F a"[lhead=cluster_D]
+            {rank=same;a;"F a"}
+    }
+#+END_SRC
+
+#+CAPTION: 也就是说，图中无论知道a->b 再加上任意一个 F x，都能推出另外一个 F
+#+RESULTS:
+[[file:images/yoneda-lemma.png]]
+
+这个引理看似很巧妙，特别是用 id 的这个部分，但是有什么用呢？
+
+如果着急可以跳到 {{{ruby(Free Monad,自由单子)}}} 部分，你会发现他是自由单子的基础。而且如果再往后会介绍的宇宙本原左看和右看，更会发现其中得精妙相似之处。
+
+*** Rank N Type
+#+INDEX: Arbitrary-rank polymorphism
+#+INDEX: Rank N Type
+
+前面说好的要解释 Rank N Type，这里赶快补充一下，不然等会我就忘了。
+
+Haskell 中可以不用声明类型, 但是其实是省略掉 universally quantified =forall=, 如果把 forall 全部加回来,
+就明了很多:
+
+- Monomorphic Rank 0 / 0级单态[fn:7]: t
+- Polymorphic Rank 1 / 1级 +变态+ 多态: forall a b. a -> b
+- Polymorphic Rank 2 / 2级多态: forall c. (forall a b. a -> b) -> c
+- Polymorphic Rank 3 / 3级多态: forall d . (forall c . (forall a b . a -> b) -> c) -> d
+
+看 rank 几只要数左边 forall 的个数就好了.
+
+一级多态只锁定一次类型 a 和 b
+
+二级多态可以分两次确定类型, 第一次确定 c, 第二次确定 a b
+
+三级多台分三次: 第一次 d, 第二次 c, 第三次 a b
+
+比如:
+
+#+BEGIN_SRC haskell
+rank2 :: forall b c . b -> c -> (forall a. a -> a) -> (b, c)
+rank2 b c f = (f b, f c)
+
+rank2 True 'a' id
+-- (True, 'a')
+#+END_SRC
+
+- =f= 在 =f True= 时类型 =Boolean -> Boolean= 是符合 =forall a. a->a= 的
+- 与此同时 =f 'a'= 时类型确实是 =Char -> Char= 但也符合 =forall a. a->a=
+
+看 Scala 的更简单，因为 Scala 不能省去 universally quantified，只需要数方括号即可。
+最左边 =[B, C]= 是 rank1， =fn= 的类型里的 =[A]= 是 rank2。
+
+#+BEGIN_SRC scala
+  def rank2[B, C](b: B, c: C)(fn: [A] => A => A): (B, C) =
+    (fn(b), fn(c))
+
+  rank2(true, 'a')([A] => (a: A) => A)
+#+END_SRC
+
+如果不用rank2 而是只有 rank1 类型系统就懵逼了:
+#+BEGIN_SRC haskell
+rank1 :: forall a b c . b -> c -> (a -> a) -> (b, c)
+rank1 b c f = (f b, f c)
+#+END_SRC
+
+#+BEGIN_SRC scala
+def rank1[A, B, C](b: B, c: C)(fn: A => A): (B, C) =
+  (fn(b), fn(c))
+#+END_SRC
+
+f 在 =f True= 是确定 a 是 Boolean，在rank1多态是时就确定了 =a -> a= 的类型一定是 =Boolean -> Boolean= ，
+然后当看到 =f 'a'= 时类型就挂了，因为 ='a'= 不是 =Boolean= 。
+
+** COMMENT /Kleisli Catergory/
+#+INDEX: Kleisi Catergory
+
+{{{ruby(函子,Functor)}}} 的范畴叫做 {{{ruby(函子范畴,Functor Catergory)}}}, 自然变换是其箭头。那{{{ruby(单子,Monad)}}}也可以定义一个范畴吗?[fn:8]
+
+是的, 这个范畴名字叫做 +单子范畴+[fn:9] {{{ruby(可莱斯利范畴,Kleisli Catergory)}}}[fn:10]，那么 Kleisli 的箭头是什么？
+
+#+BEGIN_SRC dot :file images/kleisli.png :exports results
+      digraph g {
+              rankdir="RL";
+              edge[style=invis];
+
+              { rank=same;
+                      0 [style = invis, shape=point];
+                      01 [style = invis,shape=point];
+                      02 [style=invis,shape=point];
+                      0 -> 01 -> 02;
+              }
+
+              subgraph clusterA {
+                      style=dotted
+                      "a" -> "b" -> "c";
+                      "a" -> "b" [label="g'", constraint=false, style=solid];
+                      "b" -> "c" [label="f'", constraint=false, style=solid];
+              }
+              subgraph clusterB {
+                      style=dotted
+                      "T a" -> "T b" -> "T c";
+                      "T a" -> "T b" [label="T g'", constraint=false, style=solid];
+                      "T b" -> "T c" [label="T f'", constraint=false, style=solid];
+              }
+
+              subgraph clusterC {
+                      style=dotted
+                      "T T a" -> "T T b" -> "T T c";
+                      "T T a" -> "T T b" [label="T T g'", constraint=false, style=solid];
+                      "T T b" -> "T T c" [label="T T f'", constraint=false, style=solid];
+              }
+
+
+              0 -> a;
+              01 -> "T a";
+              02 -> "T T a";
+
+              // edges between clusters
+              edge[constraint=false, style=solid];
+              a -> "T b"[label=g, color=blue, fontcolor=blue];
+              a -> "T c" [label="f <=< g", style=dashed, color=blue, fontcolor=blue]
+              "b" -> "T c"[label=f,color=blue,fontcolor=blue];
+              "T b" -> "T T c"[label="T f", color=purple, fontcolor=purple];
+              "T T c" -> "T c" [label="μ", style=dashed, color=purple];
+              c -> "T c" [label="η", style=dashed]
+              "T b" -> "T c" [label="μ . T f (>>= f)", style=dashed, color=blue,fontcolor=blue]
+
+
+      }
+#+END_SRC
+
+#+CAPTION: 注意观察大火箭 <=< 的轨迹, 不知道dot为什么会把这根线搞这么又弯又骚的, 和 >>= 。所以 Kleisli 其实就是斜着走的一个范畴，但是 >>= 把它硬生生掰 +弯+ 直了。
+#+RESULTS:
+[[file:images/kleisli.png]]
+
+我们看定义，Kleisli Category：
+
+1. 箭头是 Kleisli 箭头 =a -> T b=
+2. 东西就是c范畴中的东西. 因为 a 和 b 都是 c 范畴上的， 由于T是自函子，所以 T b 也是 c 范畴的
+
+看到图上的 {{{ruby(T f, fmap f)}}} 和 \mu 了没？[fn:11]
+
+#+BEGIN_SRC haskell
+f :: b -> T c
+fmap f :: T b -> T T c
+mu :: T T c -> T c
+#+END_SRC
+
+#+BEGIN_SRC scala
+def f[T[_], B, C](b: B): T[C]
+def fmap[T[_], B, C](f: B => C)(tb: T[B]): T[T[C]]
+def mu[T[_], C](ttc: T[T[C]]): T[C]
+#+END_SRC
+
+紫色的箭头 =T f=[fn:12] 和紫色的虚线箭头 \mu 连起来就是 =T f'=, 那么最出名的 bind ~>>=~ 符号终于出来了:
+#+BEGIN_SRC haskell
+tb >>= f = (mu . fmap f) tb
+#+END_SRC
+
+Scala 中通常叫作 =flatMap= ，但如果你用 Cats 也是可以用 ~>>=~ 的。
+#+BEGIN_SRC scala
+def flatMap[T[_], B, C](f: B => T[C])(tb: T[B]): T[C] = (mu compose fmap(f))(tb)
+#+END_SRC
+
+下面这个大火箭 ~<=<~ 可以把蓝色箭头组合起来.
+#+BEGIN_SRC haskell
+(f <=< g) = mu . T f . g = mu . fmap f . g
+#+END_SRC
+
+#+BEGIN_SRC scala
+def <=<[T[_], A, B, C](f: B => T[C])(g: A => T[B]): A => T[C] =
+  mu compose fmap(f) compose g
+#+END_SRC
+
+因此大火箭就是 Kleisli 范畴的 =compose=
+
+#+BEGIN_SRC haskell
+(<=<) :: Monad T => (b -> T c) -> (a -> T b) -> (a -> T c)
+#+END_SRC
+
+** COMMENT Summary
+第一部分理论部分都讲完了， 如果你读到这里还没有被这些{{{ruby(吊炸天,乱七八糟)}}}的概念劝退，
+那么你这份如此强大得信念感，其实到后面两部分也不会有什么用。
+因为，接下来的例子会很简单，我们要通过编程中常遇到的场景看看理论到底该如何得到实践？
+
+* Footnotes
+[fn:17] https://blog.oyanglul.us/scala/dotty/rank-n-type
+
+[fn:16] https://www.youtube.com/watch?v=kiXjcqxVogE&list=PL50ABC4792BD0A086&index=5
+
+[fn:15] https://blog.oyanglul.us/scala/dotty/en/functionk
+
+[fn:14] 为什么用两种语言呢？第一： +这样代码量会翻倍，可以凑篇幅字数。+ 这样大家会熟悉多种语言对同一概念的诠释，从而举一反三。
+第二：读者受众会大一点，因为毕竟Haskell的表述比较简洁，有可能很容易理解，但是跟主流语言的表达方式大为不同，也有可能很难适应，加上表达方式更为具体的 Scala，便于加深理解。
+
+[fn:13] 可以继续看第二部分，看完概念是如何在现实中实现的，再回来看一遍，会感觉好很多。
+
+[fn:1] https://en.wikipedia.org/wiki/Cheshire_Cat
+
+[fn:2] 如果没看就刚好不要看了, 确实有些误导
+
+[fn:3] 等等, 写前端怎么了? JavaScript 只是我觉得顺手的若干语言之一, JS用户那么多, 写书当然要用 JS 啦, 难道用 Idris 那还能卖得掉吗? +当然最后用JS也没怎么卖掉...+
+
+[fn:4] 并不是说这两门语言一定在鄙视链顶端, 而是拥有强大类型系统的语言才能体现出范畴论的内容
+
+[fn:5] 这里可以把 Functor 的第一第二个参数消掉, 因为已经知道是在 Hask 范畴了
+
+[fn:6] https://blog.oyanglul.us/scala/dotty/en/rank-n-type 别急, 后面马上讲到
+
+[fn:7] 也就不是不变态
+
+[fn:8] 当然, 单子是自函子，所以也可以是自函子范畴
+
+[fn:9] 怎么说也是函数式编程的核心,怎么可以叫的这么low这么直接
+
+[fn:10] 这个是我瞎翻译的, 但是读出来就是这么个意思, 真的, 不骗你, 照这么读绝对装的一手好逼, 不会被嘲笑的
+
+[fn:11] (敲黑板) 就是紫色那根嘛!
+
+[fn:12] 即 =fmap f=
+

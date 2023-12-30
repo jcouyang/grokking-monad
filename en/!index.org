@@ -1,0 +1,15 @@
+#+TITLE: Grokking Monad
+#+Date: <2017-02-10 Fri>
+#+AUTHOR: Jichao Ouyang
+#+LATEX_CLASS: book
+#+LATEX_CLASS_OPTIONS: [a5paper]
+
+#+OPTIONS: ^:t todo:nil toc:t num:3
+#+EXPORT_FILE_NAME: index.org
+
+#+HTML: <script src="https://gumroad.com/js/gumroad-embed.js"></script><div class="gumroad-product-embed" data-gumroad-product-id="grokking-monad"><a href="https://gumroad.com/l/grokking-monad"><img src="https://blog.oyanglul.us/grokking-monad/cover.jpg"></img></a></div>
+
+
+#+INCLUDE: "./part1.org"
+# #+INCLUDE: "./part2.org"
+# #+INCLUDE: "./part3.org"
