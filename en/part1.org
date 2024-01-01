@@ -115,15 +115,21 @@ I think I shall start from the begining, =class= defines rules for a ~Category c
 Yes indeed...
 
 #+begin_quote
-"Sounds like Category is such a generic thing that can apply to everything, crazy thoughts, can we have category of category?"
+"Can there be a category of category thought?"
 #+end_quote
 
+Really good question, actually there can be. If category itself is object, and you can find morphism from one category to another... and the morphism has a special name - /Functor!/
 
 ** Functor
 
+\begin{definition}[Functor]
+A functor is a morphism of categories.
+\end{definition}
 
-两个范畴中间可以用叫 Functor 的东西来连接起来，比如一个从范畴 C 到范畴 D 的函子 T，我们可以标
-作 =Functor C D T= 。
+\begin{tikzcd}
+A \arrow[rd] \arrow[r, "\phi"] & B \\
+& C
+\end{tikzcd}
 
 #+BEGIN_SRC dot :file images/functor.png :exports results
   digraph {
@@ -205,7 +211,7 @@ class Functor t where
     def fmap[A, B](c: A => B): T[A] => T[B]
 #+END_SRC
 
-而 /{{{ruby(自函子,endofunctor)}}}/ 就是这种连接相同范畴的 Functor，因为它从范畴 Hask 到达同样的范畴 Hask。
+而 endofunctor 就是这种连接相同范畴的 Functor，因为它从范畴 Hask 到达同样的范畴 Hask。
 #+INDEX: endofunctor
 #+INDEX: 自函子
 

@@ -9,5 +9,8 @@ grokking-monad-zh.pdf: grokking-monad-zh.tex
 grokking-monad-en.pdf: grokking-monad-en.tex
 	xelatex grokking-monad-en.tex grokking-monad-en.pdf
 
+grokking-monad-en.tex: !en.org en/*.org
+	emacs -batch -l org -l config.el ./\!en.org -f org-latex-export-to-latex
+
 grokking-monad-zh.mobi: grokking-monad.epub
 	/Applications/calibre.app/Contents/MacOS/ebook-convert grokking-monad.epub grokking-monad.mobi
